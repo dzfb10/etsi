@@ -165,3 +165,64 @@ document.getElementById("btnMic").onclick = () => {
 </script>
 </body>
 </html>
+<script>
+const SRV = "https://dark-horizon-ai" + ".onrender.com", chat = document.getElementById("chat"), inp = document.getElementById("inp");
+fetch(SRV + "/").catch(() => {});
+function addMsg(h, w) { const d = document.createElement("div"); d.className = "msg " + (w || "bot"); d.innerHTML = h; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d; }
+function dlFile(u, n) { const a = document.createElement("a"); a.href = u; a.download = n; a.target = "_blank"; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1500); }
+async function fetchBestImage(p) {
+  const s = String.fromCharCode(47);
+  try {
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 32000);
+    const r = await fetch(SRV + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: p }) });
+    if (r.ok) { const b = await r.blob(); if (b.size > 6000) return URL.createObjectURL(b); }
+  } catch (e) {}
+  const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
+    method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
+    body: JSON.stringify({ prompt: p + ", 8k photorealistic ### blurry, cartoon", params: { width: 512, height: 512, steps: 16, n: 1 } })
+  });
+  const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 1500));
+    const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
+    const g = st.generations && eval("st.generations" + i0);
+    if (st.done && g && g.img) return g.img;
+  }
+  throw new Error("busy");
+}
+async function buildVid(u, box) {
+  box.innerHTML = "🎬 جاري إنتاج الفيديو..."; const im = new Image(); im.crossOrigin = "anonymous";
+  await new Promise(r => { im.onload = r; im.onerror = r; im.src = u; });
+  const c = document.createElement("canvas"); c.width = 640; c.height = 640;
+  const ctx = c.getContext("2d"), rec = new MediaRecorder(c.captureStream(30), { videoBitsPerSecond: 2500000 }), ch = [];
+  rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); }; rec.start();
+  for (let f = 0; f < 90; f++) { const sc = 1 + (f / 90) * 0.14; ctx.save(); ctx.translate(320, 320); ctx.scale(sc, sc); ctx.translate(-320, -320); ctx.drawImage(im, 0, 0, 640, 640); ctx.restore(); await new Promise(r => setTimeout(r, 33)); }
+  rec.stop(); await new Promise(r => { rec.onstop = r; });
+  const vu = URL.createObjectURL(new Blob(ch, { type: "video/webm" }));
+  box.innerHTML = `<video class="pic" src="${vu}" controls autoplay loop muted playsinline></video><div class="bar"><button type="button" class="abtn dlV">⬇️ تحميل الفيديو</button></div>`;
+  box.querySelector(".dlV").onclick = () => dlFile(vu, "DarkHorizon_Video.webm");
+}
+async function run(t) {
+  const q = (t || "").trim(); if (!q) return; addMsg(q, "user"); inp.value = "";
+  if (/فيديو|تحريك|video/i.test(q) || /صور|صورة|ارسم|صمم|image/i.test(q)) {
+    const isV = /فيديو|تحريك|video/i.test(q), box = addMsg(isV ? "🎬 جاري تصميم المشهد..." : "🎨 جاري التوليد بدقة FLUX.1 1024px...");
+    try {
+      const u = await fetchBestImage(q);
+      if (isV) return await buildVid(u, box);
+      box.innerHTML = `<img class="pic" src="${u}"><div class="bar"><button type="button" class="abtn dlB">⬇️ تحميل</button><button type="button" class="abtn gdB">🌅 ذهبي</button><button type="button" class="abtn vdB">🎬 فيديو</button></div>`;
+      box.querySelector(".dlB").onclick = () => dlFile(u, "DarkHorizon_Pro.jpg");
+      box.querySelector(".gdB").onclick = () => { box.querySelector("img").style.filter = "contrast(1.15) saturate(1.25) sepia(0.2)"; };
+      box.querySelector(".vdB").onclick = () => buildVid(u, box);
+    } catch (e) { box.innerHTML = "⚠️ تعذر الاتصال لحظياً، أعد الإرسال الآن."; }
+    return;
+  }
+  const box = addMsg("⚡ جاري التفكير...");
+  try { const r = await fetch(SRV + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q }) }); box.innerHTML = ((await r.json()).reply || "").replace(/\n/g, "<br>"); } catch (e) { box.innerHTML = "⚡ الخادم يستيقظ، أعد المحاولة."; }
+}
+document.getElementById("sendBtn").onclick = () => run(inp.value);
+inp.onkeydown = e => { if (e.key === "Enter") run(inp.value); };
+document.getElementById("btnNew").onclick = () => { chat.innerHTML = "<div class=\"msg bot\">✨ جلسة جديدة جاهزة!</div>"; };
+document.getElementById("btnPlus").onclick = () => document.getElementById("fIn").click();
+document.getElementById("fIn").onchange = async e => { const i0 = "[" + "0" + "]", f = eval("e.target.files" + i0); if (f) await buildVid(URL.createObjectURL(f), addMsg("🎞 جاري تحريك صورتك...")); };
+document.getElementById("btnMic").onclick = () => { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return; const r = new SR(); r.lang = "ar-DZ"; r.onresult = e => { const i0 = "[" + "0" + "]"; inp.value = eval("e.results" + i0 + i0 + ".transcript"); run(inp.value); }; r.start(); };
+</script></body></html>
