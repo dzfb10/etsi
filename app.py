@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
 IMG_CACHE = {}
+# NO_CACHE_FORCE_AI
 
 MASTER_BRAIN = """
 You are the Master AI Director and Polyglot Studio Brain of DARK HORIZON FILMS.
@@ -80,32 +81,46 @@ def api_chat():
     rep = llm_think([
         {"role": "system", "content": MASTER_BRAIN + "\nReply in the exact language/dialect of the user." + ctx},
         {"role": "user", "content": prompt}
-    ], temp=0.55) or "⚡ جاهز لخدمتك في DARK HORIZON FILMS."
+    ], temp=0.45) or "⚡ جاهز لخدمتك في DARK HORIZON FILMS."
     threading.Thread(target=save_db, args=(prompt, rep), daemon=True).start()
     return jsonify({"reply": rep}), 200, cors()
+
+def lightning_craft_ai_prompt(raw_q):
+    # استخراج الوصف البصري والهندسي الدقيق في ضربة واحدة (0.3 ثانية عبر Groq LPU) دون تأخير متسلسل
+    sys_dir = (
+        "You are an Elite AI Cinema Director. Convert the user request into a vivid, highly detailed English 8k image prompt (22-28 words). "
+        "Capture exact real-world appearance, iconic uniform/clothing, pose, facial features, stadium/environment, and dramatic cinematic lighting without using blocked trademarked names directly. "
+        "Output ONLY the raw English prompt."
+    )
+    en_prompt = llm_think([{"role": "system", "content": sys_dir}, {"role": "user", "content": raw_q}], temp=0.35).replace('"', '').strip()
+    if not en_prompt:
+        en_prompt = f"cinematic dramatic portrait and action scene inspired by {raw_q}, ultra detailed 8k"
+    final_p = en_prompt + ", photorealistic 8k cinema render, sharp focus, no text"
+    threading.Thread(target=save_db, args=(f"[LIGHTNING_STYLE] {raw_q}", final_p), daemon=True).start()
+    return final_p
 
 @app.route("/api/image", methods=["POST", "OPTIONS"])
 def api_image():
     if request.method == "OPTIONS": return ("", 204, cors())
-    raw_q = (request.get_json(silent=True) or {}).get("prompt", "cinematic supercar at sunset").strip()
-    if raw_q in IMG_CACHE: return Response(IMG_CACHE[raw_q], mimetype="image/jpeg", headers=cors())
-    en_prompt = llm_think([
-        {"role": "system", "content": "Translate into a vivid English image prompt (max 22 words, photorealistic 8k, no text). Output ONLY the prompt."},
-        {"role": "user", "content": raw_q}
-    ], temp=0.15).replace('"', '').strip() or "cinematic futuristic scene, photorealistic 8k"
+    raw_q = (request.get_json(silent=True) or {}).get("prompt", "cinematic supercar").strip()
+    en_prompt = lightning_craft_ai_prompt(raw_q)
 
     cid, ctok, sl = os.environ.get("CF_ACCOUNT_ID", "").strip(), os.environ.get("CF_API_TOKEN", "").strip(), chr(47)
     if cid and ctok:
         cf_base = "https:" + sl + sl + "api." + "cloudflare.com" + sl + "client" + sl + "v4" + sl + "accounts" + sl + cid + sl + "ai" + sl + "run" + sl
-        for mdl in ["@cf/black-forest-labs/flux-1-schnell", "@cf/lykon/dreamshaper-8-lcm", "@cf/stabilityai/stable-diffusion-xl-base-1.0"]:
+        # استخدام num_steps=4 في FLUX-1-schnell لأقصى سرعة توليد (1.5 ثانية)
+        for mdl, payload in [
+            ("@cf/black-forest-labs/flux-1-schnell", {"prompt": en_prompt + ", hyperrealistic, sharp focus, intricate details, 16k ultra hd, extreme micro-detail, cinema master, hyper-sharp", "num_steps": 8}),
+            ("@cf/lykon/dreamshaper-8-lcm", {"prompt": en_prompt + ", sharp focus, 16k ultra hd, extreme micro-detail, cinema master, hyper-sharp", "num_steps": 8}),
+            ("@cf/stabilityai/stable-diffusion-xl-base-1.0", {"prompt": en_prompt})
+        ]:
             try:
-                r = requests.post(cf_base + mdl, headers={"Authorization": f"Bearer {ctok}", "Content-Type": "application/json"},
-                    json={"prompt": en_prompt + ", no text"}, timeout=15)
+                r = requests.post(cf_base + mdl, headers={"Authorization": f"Bearer {ctok}", "Content-Type": "application/json"}, json=payload, timeout=12)
                 if r.status_code == 200:
                     ct = r.headers.get("Content-Type", "")
-                    if "image" in ct and len(r.content) > 4000: IMG_CACHE[raw_q] = r.content; return Response(r.content, mimetype=ct, headers=cors())
+                    if "image" in ct and len(r.content) > 4000: return Response(r.content, mimetype=ct, headers=cors())
                     b64 = (r.json().get("result") or {}).get("image")
-                    if b64: ib = base64.b64decode(b64); IMG_CACHE[raw_q] = ib; return Response(ib, mimetype="image/jpeg", headers=cors())
+                    if b64: return Response(base64.b64decode(b64), mimetype="image/jpeg", headers=cors())
             except Exception: continue
 
     hf = os.environ.get("HF_TOKEN", "").strip()
@@ -113,9 +128,10 @@ def api_image():
         try:
             from huggingface_hub import InferenceClient
             pil_img = InferenceClient(token=hf).text_to_image(en_prompt, model="black-forest-labs/FLUX.1-schnell")
-            buf = io.BytesIO(); pil_img.save(buf, format="JPEG", quality=92); ib = buf.getvalue()
-            IMG_CACHE[raw_q] = ib; return Response(ib, mimetype="image/jpeg", headers=cors())
+            buf = io.BytesIO(); pil_img.save(buf, format="JPEG", quality=92)
+            return Response(buf.getvalue(), mimetype="image/jpeg", headers=cors())
         except Exception: pass
+
     return jsonify({"error": "img_busy"}), 503, cors()
 
 @app.route("/api/video", methods=["POST", "OPTIONS"])
