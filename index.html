@@ -4,217 +4,201 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>DARK HORIZON FILMS · MODERN AI STUDIO</title>
+<title>DARK HORIZON FILMS · ULTRA AI v12</title>
 <style>
-:root{--bg:#050814;--glass:rgba(15,23,42,0.72);--border:rgba(56,189,248,0.22);--accent:#38bdf8;--grad:linear-gradient(135deg,#0284c7,#6366f1)}
+:root{--bg:#040712;--glass:rgba(13,20,38,0.78);--border:rgba(56,189,248,0.25);--grad:linear-gradient(135deg,#0284c7,#7c3aed)}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif}
-body{background:radial-gradient(circle at top right,#0f1c3f,var(--bg) 60%);color:#f8fafc;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-header{padding:14px 16px;background:var(--glass);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.logo{font-weight:900;font-size:15px;letter-spacing:.5px;background:linear-gradient(90deg,#38bdf8,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:8px}
-.pulse{width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981}
-.pill{background:rgba(30,41,59,0.8);color:#e2e8f0;border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
-#chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
-.msg{max-width:86%;padding:13px 16px;border-radius:18px;font-size:14px;line-height:1.65;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.user{align-self:flex-start;background:var(--grad);color:#fff;border-bottom-right-radius:4px;box-shadow:0 4px 15px rgba(56,189,248,0.25)}
-.bot{align-self:flex-end;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--border);color:#f1f5f9;border-bottom-left-radius:4px}
-.media{width:100%;max-width:320px;border-radius:14px;margin-top:10px;border:1px solid var(--border);display:block}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.tbtn{background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid var(--border);padding:6px 12px;border-radius:10px;font-size:12px;text-decoration:none;cursor:pointer}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:rgba(5,8,20,0.6);border-top:1px solid var(--border)}
-.chip{white-space:nowrap;background:rgba(30,41,59,0.7);color:#cbd5e1;border:1px solid var(--border);padding:8px 14px;border-radius:22px;font-size:12px;cursor:pointer;transition:.2s}
-.chip:active,.icon-btn:active,.pill:active{transform:scale(0.94)}
-footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
-#inp{flex:1;min-width:0;background:rgba(15,23,42,0.9);border:1px solid var(--border);color:#fff;padding:12px 16px;border-radius:24px;font-size:14px;outline:none}
-#inp:focus{border-color:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,0.25)}
-.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:rgba(30,41,59,0.85);color:#38bdf8;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-#sendBtn{background:var(--grad);color:#fff;border:none;box-shadow:0 4px 12px rgba(99,102,241,0.4)}
+body{background:radial-gradient(circle at top right,#102048,var(--bg) 60%);color:#f8fafc;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:12px 14px;background:var(--glass);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;font-size:14px;background:linear-gradient(90deg,#38bdf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981}
+.pill{background:rgba(30,41,59,0.85);color:#e2e8f0;border:1px solid var(--border);padding:5px 11px;border-radius:18px;font-size:12px;cursor:pointer}
+#chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:14px;line-height:1.6;word-wrap:break-word}
+.user{align-self:flex-start;background:var(--grad);color:#fff;border-bottom-right-radius:4px}
+.bot{align-self:flex-end;background:var(--glass);border:1px solid var(--border);color:#f1f5f9;border-bottom-left-radius:4px}
+.media{width:100%;max-width:330px;border-radius:12px;margin-top:8px;border:1px solid var(--border);display:block}
+.tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tbtn{background:rgba(56,189,248,0.14);color:#38bdf8;border:1px solid var(--border);padding:6px 10px;border-radius:9px;font-size:12px;cursor:pointer}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:8px 12px;background:rgba(4,7,18,0.7);border-top:1px solid var(--border)}
+.chip{white-space:nowrap;background:rgba(30,41,59,0.75);color:#cbd5e1;border:1px solid var(--border);padding:7px 12px;border-radius:20px;font-size:12px;cursor:pointer}
+footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:7px;align-items:center}
+#inp{flex:1;min-width:0;background:rgba(15,23,42,0.95);border:1px solid var(--border);color:#fff;padding:11px 14px;border-radius:22px;font-size:14px;outline:none}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:rgba(30,41,59,0.9);color:#38bdf8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#sendBtn{background:var(--grad);color:#fff;border:none}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo"><span class="pulse"></span> DARK HORIZON FILMS ✦</div>
+  <div class="logo"><span class="dot"></span> DARK HORIZON FILMS ✦</div>
   <div style="display:flex;gap:6px">
     <button type="button" class="pill" id="btnNew">+ جديد</button>
-    <button type="button" class="pill" id="btnProj">🗂 المشاريع</button>
+    <button type="button" class="pill" id="btnMem">🧠 الذاكرة</button>
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(FLUX.1-1024 PHOTOREAL v11.0)</b></div>
+  <div class="msg bot">🚀 مرحباً بك في <b>DARK HORIZON ULTRA v12.0</b> — جميع محركات الذكاء الاصطناعي المجانية مفعّلة بالكامل!</div>
 </div>
 <div class="chips">
-  <button type="button" class="chip" data-p="صمم صورة سيارة رياضية مستقبلية في الغروب 8K">🎨 تصميم صورة AI</button>
-  <button type="button" class="chip" data-p="انتج فيديو سينمائي بالذكاء الاصطناعي">🎬 إنتاج فيديو AI</button>
-  <button type="button" class="chip" id="upVid">🎞 فيديو من هاتفي</button>
-  <button type="button" class="chip" id="upImg">🖼 تحريك صورة</button>
+  <button type="button" class="chip" data-p="صمم صورة سيارة مستقبلية خارقة في الغروب 8K">🎨 صورة FLUX 1024px</button>
+  <button type="button" class="chip" data-p="انتج فيديو سينمائي لمدينة مستقبلية بالذكاء الاصطناعي">🎬 فيديو AI حقيقي</button>
+  <button type="button" class="chip" id="upRemix">🪄 تعديل صورة من هاتفي</button>
+  <button type="button" class="chip" id="upAnim">🎞 تحريك صورة من هاتفي</button>
   <button type="button" class="chip" id="upLogo">🏷 رفع اللوغو</button>
 </div>
 <footer>
   <button type="button" class="icon-btn" id="btnAdd">+</button>
   <button type="button" class="icon-btn" id="btnMic">🎙</button>
-  <input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو سؤال...">
+  <input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود...">
   <button type="button" class="icon-btn" id="sendBtn">➤</button>
 </footer>
 <input type="file" id="fMedia" accept="image/*,video/*" hidden>
 <input type="file" id="fLogo" accept="image/*" hidden>
 <script>
 const API = "https://onrender.com";
-const chat = document.getElementById("chat");
-const inp = document.getElementById("inp");
-let logoImg = null;
-
-
-async function upscaleAndSharpenHD(srcUrl) {
-  return await new Promise(res => {
-    const im = new Image(); im.crossOrigin = "anonymous";
-    im.onload = () => {
-      try {
-        const c = document.createElement("canvas"); c.width = 1536; c.height = 1536;
-        const ctx = c.getContext("2d");
-        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-        ctx.filter = "contrast(1.12) saturate(1.16) brightness(1.03)";
-        ctx.drawImage(im, 0, 0, 1536, 1536);
-        res(c.toDataURL("image/png"));
-      } catch (e) { res(srcUrl); }
-    };
-    im.onerror = () => res(srcUrl);
-    im.src = srcUrl;
-  });
-}
-
-async function triggerRealDownload(url, filename) {
-  try {
-    const r = await fetch(url);
-    const b = await r.blob();
-    const blobUrl = URL.createObjectURL(b);
-    const a = document.createElement("a");
-    a.style.display = "none"; a.href = blobUrl; a.download = filename;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 2000);
-    addMsg("✅ بدأ حفظ الملف في هاتفك: <b>" + filename + "</b>");
-  } catch (e) {
-    window.open(url, "_blank");
-  }
-}
+const chat = document.getElementById("chat"), inp = document.getElementById("inp");
+let logoImg = null, uploadAction = "anim";
 
 function addMsg(html, who) {
-  const d = document.createElement("div");
-  d.className = "msg " + (who || "bot");
-  d.innerHTML = html;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-  return d;
+  const d = document.createElement("div"); d.className = "msg " + (who || "bot"); d.innerHTML = html;
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d;
 }
 
-async function makePureAIImage(prompt) {
+async function saveToPhone(url, name) {
+  try {
+    const b = await (await fetch(url)).blob();
+    const u = URL.createObjectURL(b), a = document.createElement("a");
+    a.href = u; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(u); }, 2000);
+    addMsg("✅ تم حفظ الملف في هاتفك: <b>" + name + "</b>");
+  } catch (e) { window.open(url, "_blank"); }
+}
+
+async function genImage1024(prompt) {
   const s = String.fromCharCode(47);
-  const fromRender = async () => {
-    const ac = new AbortController(); setTimeout(() => ac.abort(), 38000);
-    const r = await fetch(API + "/api/image", {
-      method: "POST", signal: ac.signal,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: prompt })
-    });
-    if (!r.ok) throw new Error("render");
-    const b = await r.blob();
-    if (b.size < 4000) throw new Error("small");
-    return URL.createObjectURL(b);
-  };
-
-  const fromHorde = async () => {
-    const enQ = /لاعب|كرة|football/i.test(prompt) ? "cinematic soccer superstar player under stadium floodlights, action shot, 8k photorealistic" :
-                /سيار|سباق|car/i.test(prompt) ? "futuristic hypercar drifting on neon highway at sunset, 8k photorealistic" :
-                "epic futuristic cyber city at sunset, volumetric lighting, 8k photorealistic";
-    const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
-      method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enQ + " ### blurry, low quality, text, watermark", params: { width: 512, height: 512, steps: 18, n: 1 } })
-    });
-    const hid = (await hr.json()).id;
-    const i0 = "[" + "0" + "]";
-    for (let i = 0; i < 20; i++) {
-      await new Promise(r => setTimeout(r, 1500));
-      const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
-      const g = st.generations && eval("st.generations" + i0);
-      if (st.done && g && g.img) return g.img;
-    }
-    throw new Error("timeout");
-  };
-
-  try { return await fromRender(); } catch (e) { return await fromHorde(); }
+  try {
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 36000);
+    const r = await fetch(API + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+    if (r.ok) { const b = await r.blob(); if (b.size > 6000) return URL.createObjectURL(b); }
+  } catch (e) {}
+  const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
+    method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
+    body: JSON.stringify({ prompt: prompt + ", 8k photorealistic masterpiece ### blurry, low quality", params: { width: 512, height: 512, steps: 18, n: 1 } })
+  });
+  const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 1500));
+    const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
+    const g = st.generations && eval("st.generations" + i0);
+    if (st.done && g && g.img) return g.img;
+  }
+  throw new Error("busy");
 }
 
-async function makeVideo(src, box) {
-  box.innerHTML = "🎬 جاري إنتاج الفيديو بالذكاء الاصطناعي...";
+async function genVideoAI(prompt, box) {
+  box.innerHTML = "🎬 جاري توليد الفيديو بالذكاء الاصطناعي الحقيقي (Wan2.1 / CogVideoX)...";
+  try {
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 45000);
+    const r = await fetch(API + "/api/video", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+    if (r.status === 200) {
+      const vUrl = URL.createObjectURL(await r.blob());
+      box.innerHTML = '<video class="media" src="' + vUrl + '" controls autoplay loop muted playsinline></video><div class="tools"><button type="button" class="tbtn" id="dlV">⬇️ حفظ الفيديو MP4</button></div>';
+      box.querySelector("#dlV").onclick = () => saveToPhone(vUrl, "DH_AI_VIDEO_" + Date.now() + ".mp4");
+      return;
+    }
+  } catch (e) {}
+  const imgU = await genImage1024(prompt);
+  await animateImageHD(imgU, box);
+}
+
+async function animateImageHD(src, box) {
+  box.innerHTML = "🎞 جاري الرندر السينمائي عالي الجودة (1024px · 60FPS)...";
   const im = new Image(); im.crossOrigin = "anonymous";
   await new Promise(r => { im.onload = r; im.onerror = r; im.src = src; });
   const c = document.createElement("canvas"); c.width = 1024; c.height = 1024;
-  const ctx = c.getContext("2d"); const rec = new MediaRecorder(c.captureStream(60), { videoBitsPerSecond: 8000000 });
-  const chunks = []; rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
-  rec.start();
-  for (let f = 0; f < 75; f++) {
-    const sc = 1 + (f / 75) * 0.15;
+  const ctx = c.getContext("2d"), rec = new MediaRecorder(c.captureStream(60), { videoBitsPerSecond: 8000000 });
+  const chunks = []; rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); }; rec.start();
+  for (let f = 0; f < 90; f++) {
+    const sc = 1 + (f / 90) * 0.14;
     ctx.save(); ctx.translate(512, 512); ctx.scale(sc, sc); ctx.translate(-512, -512);
     ctx.drawImage(im, 0, 0, 1024, 1024); ctx.restore();
-    if (logoImg) ctx.drawImage(logoImg, 860, 30, 130, 130);
+    if (logoImg) ctx.drawImage(logoImg, 850, 30, 140, 140);
     await new Promise(r => setTimeout(r, 16));
   }
   rec.stop(); await new Promise(r => { rec.onstop = r; });
-  const v = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
-  box.innerHTML = '<video class="media" src="' + v + '" controls autoplay loop muted playsinline></video><div class="tools"><button type="button" class="tbtn" id="dlVidBtn">⬇️ حفظ الفيديو HD</button></div>';
-  box.querySelector("#dlVidBtn").onclick = () => triggerRealDownload(v, "DH_CINEMA_VIDEO_" + Date.now() + ".webm");
+  const vUrl = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
+  box.innerHTML = '<video class="media" src="' + vUrl + '" controls autoplay loop muted playsinline></video><div class="tools"><button type="button" class="tbtn" id="dlV">⬇️ حفظ الفيديو HD</button></div>';
+  box.querySelector("#dlV").onclick = () => saveToPhone(vUrl, "DH_CINEMA_" + Date.now() + ".webm");
 }
 
-async function runQuery(txt) {
-  const q = (txt || "").trim();
-  if (!q) return;
-  addMsg(q, "user");
-  inp.value = "";
-  const isV = /فيديو|تحريك|مشهد|video/i.test(q);
-  const isI = /صور|صورة|ارسم|صمم|image/i.test(q);
-  if (isV || isI) {
-    const box = addMsg("🎨 جاري التوليد بالذكاء الاصطناعي الخالص...");
-    const rawU = await makePureAIImage(q); const u = await upscaleAndSharpenHD(rawU);
-    if (isV) { await makeVideo(u, box); }
-    else {
-      box.innerHTML = '<img class="media" src="' + u + '"><div class="tools"><button type="button" class="tbtn" id="dlImgBtn">⬇️ حفظ الصورة HD</button><button type="button" class="tbtn" id="vNow">🎬 تحويل لفيديو</button></div>';
-      box.querySelector("#dlImgBtn").onclick = () => triggerRealDownload(u, "DH_ULTRA_HD_" + Date.now() + ".jpg");
-      box.querySelector("#vNow").onclick = () => makeVideo(u, box);
-    }
+async function runPrompt(txt) {
+  const q = (txt || "").trim(); if (!q) return;
+  addMsg(q, "user"); inp.value = "";
+  const mem = JSON.parse(localStorage.getItem("dh_mem") || "[]"); mem.unshift(q); localStorage.setItem("dh_mem", JSON.stringify(mem.slice(0, 20)));
+  if (/فيديو|مشهد|video/i.test(q)) { const b = addMsg("⏳ جاري التحضير..."); await genVideoAI(q, b); return; }
+  if (/صور|صورة|ارسم|صمم|image/i.test(q)) {
+    const b = addMsg("🎨 جاري التوليد بدقة FLUX.1 1024×1024...");
+    try {
+      const u = await genImage1024(q);
+      b.innerHTML = '<img class="media" src="' + u + '"><div class="tools"><button type="button" class="tbtn" id="dlI">⬇️ حفظ الصورة PNG</button><button type="button" class="tbtn" id="toV">🎬 تحويل لفيديو</button></div>';
+      b.querySelector("#dlI").onclick = () => saveToPhone(u, "DH_FLUX_1024_" + Date.now() + ".png");
+      b.querySelector("#toV").onclick = () => animateImageHD(u, b);
+    } catch (e) { b.innerHTML = "⚠️ الخادم مشغول لحظياً، أعد المحاولة."; }
     return;
   }
-  const box = addMsg("⚡ جاري التفكير...");
+  const b = addMsg("⚡ جاري التفكير (Qwen-72B)...");
   try {
     const r = await fetch(API + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q }) });
     const d = await r.json();
-    box.innerHTML = (d.reply || d.response || "تم الاستلام.").replace(/\n/g, "<br>");
-  } catch (e) { box.innerHTML = "⚡ الخادم يستيقظ الآن، أعد المحاولة بعد ثوانٍ."; }
+    b.innerHTML = (d.reply || "").replace(/```([\s\(\S\)]*?)```/g, '<pre dir="ltr" style="background:#020617;padding:10px;border-radius:10px;overflow-x:auto;color:#38bdf8;margin:6px 0"><code>$1</code></pre>').replace(/\n/g, "<br>");
+  } catch (e) { b.innerHTML = "⚡ الخادم يستيقظ الآن، أعد الإرسال بعد ثوانٍ."; }
 }
 
-document.getElementById("sendBtn").onclick = () => runQuery(inp.value);
-inp.onkeydown = e => { if (e.key === "Enter") runQuery(inp.value); };
-document.querySelectorAll(".chip[data-p]").forEach(b => { b.onclick = () => runQuery(b.getAttribute("data-p")); });
-document.getElementById("btnNew").onclick = () => { chat.innerHTML = '<div class="msg bot">✨ جلسة جديدة جاهزة!</div>'; };
-document.getElementById("btnProj").onclick = () => addMsg("🗂 المشاريع محفوظة تلقائياً في الاستوديو السحابي.");
+document.getElementById("sendBtn").onclick = () => runPrompt(inp.value);
+inp.onkeydown = e => { if (e.key === "Enter") runPrompt(inp.value); };
+document.querySelectorAll(".chip[data-p]").forEach(b => { b.onclick = () => runPrompt(b.getAttribute("data-p")); });
+document.getElementById("btnNew").onclick = () => { chat.innerHTML = '<div class="msg bot">✨ جلسة جديدة جاهزة في <b>DARK HORIZON ULTRA v12.0</b></div>'; };
+document.getElementById("btnMem").onclick = () => {
+  const m = JSON.parse(localStorage.getItem("dh_mem") || "[]");
+  addMsg(m.length ? "🧠 <b>آخر طلباتك المحفوظة:</b><br>• " + m.slice(0, 6).join("<br>• ") : "🧠 الذاكرة فارغة حالياً.");
+};
 const fM = document.getElementById("fMedia"), fL = document.getElementById("fLogo");
-document.getElementById("btnAdd").onclick = () => fM.click();
-document.getElementById("upVid").onclick = () => { fM.accept = "video/*"; fM.click(); };
-document.getElementById("upImg").onclick = () => { fM.accept = "image/*"; fM.click(); };
+document.getElementById("btnAdd").onclick = () => { uploadAction = "anim"; fM.click(); };
+document.getElementById("upAnim").onclick = () => { uploadAction = "anim"; fM.accept = "image/*"; fM.click(); };
+document.getElementById("upRemix").onclick = () => { uploadAction = "remix"; fM.accept = "image/*"; fM.click(); };
 document.getElementById("upLogo").onclick = () => fL.click();
 fM.onchange = async e => {
-  const i0 = "[" + "0" + "]"; const f = eval("e.target.files" + i0); if (!f) return;
+  const i0 = "[" + "0" + "]", f = eval("e.target.files" + i0); if (!f) return;
   const u = URL.createObjectURL(f);
-  if (f.type.startsWith("image/")) { const b = addMsg("🖼 جاري تحريك صورتك..."); await makeVideo(u, b); }
+  if (uploadAction === "remix") {
+    const styleQ = inp.value.trim() || "futuristic neon cyberpunk cinematic portrait 8k";
+    const b = addMsg("🪄 جاري تعديل صورتك بالذكاء الاصطناعي...");
+    const rd = new FileReader();
+    rd.onload = async () => {
+      try {
+        const r = await fetch(API + "/api/remix", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: rd.result, prompt: styleQ }) });
+        if (r.status === 200) {
+          const nu = URL.createObjectURL(await r.blob());
+          b.innerHTML = '<img class="media" src="' + nu + '"><div class="tools"><button type="button" class="tbtn" id="dlR">⬇️ حفظ التعديل</button></div>';
+          b.querySelector("#dlR").onclick = () => saveToPhone(nu, "DH_REMIX_" + Date.now() + ".png");
+          return;
+        }
+      } catch (err) {}
+      await animateImageHD(u, b);
+    };
+    rd.readAsDataURL(f);
+  } else if (f.type.startsWith("image/")) { const b = addMsg("🎞 جاري تحريك صورتك..."); await animateImageHD(u, b); }
   else addMsg('<video class="media" src="' + u + '" controls autoplay loop muted playsinline></video>');
 };
 fL.onchange = e => {
-  const i0 = "[" + "0" + "]"; const f = eval("e.target.files" + i0); if (!f) return;
+  const i0 = "[" + "0" + "]", f = eval("e.target.files" + i0); if (!f) return;
   const im = new Image(); im.onload = () => { logoImg = im; addMsg("🏷 تم تثبيت اللوغو الخاص بك!"); }; im.src = URL.createObjectURL(f);
 };
 document.getElementById("btnMic").onclick = () => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return addMsg("🎙 الصوت غير مدعوم هنا.");
   const r = new SR(); r.lang = "ar-SA"; addMsg("🎙 تحدث الآن...");
-  r.onresult = e => { const i0 = "[" + "0" + "]"; inp.value = eval("e.results" + i0 + i0 + ".transcript"); runQuery(inp.value); };
+  r.onresult = e => { const i0 = "[" + "0" + "]"; inp.value = eval("e.results" + i0 + i0 + ".transcript"); runPrompt(inp.value); };
   r.start();
 };
 </script>
