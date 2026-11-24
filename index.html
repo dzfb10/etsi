@@ -50,7 +50,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2614)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS ENGINE v7723)</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -91,7 +91,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2614)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS ENGINE v7723)</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
@@ -171,7 +171,7 @@ async function fetchBestImage(promptTxt, seedNum) {
     if (!hr.ok) throw new Error("horde_err");
     const hid = (await hr.json()).id;
     if (!hid) throw new Error("no_id");
-    for (let w = 0; w < 22; w++) {
+    for (let w = 0; w < 16; w++) {
       await new Promise(r => setTimeout(r, 1500));
       const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
       if (st.done && st.generations && st.generations[0] && st.generations[0].img) {
@@ -182,18 +182,7 @@ async function fetchBestImage(promptTxt, seedNum) {
   };
 
   // سباق متوازٍ: أسرع محرك ينتهي أولاً يعرض الصورة فوراً!
-  try { return await Promise.any([fromRender(), fromHorde()]); } catch (e) {}
-  // خط ضمان 16K Volumetric Cinema Render محلي لا يتعطل أبداً
-  const c = document.createElement("canvas"); c.width = 1024; c.height = 1024;
-  const ctx = c.getContext("2d");
-  const g = ctx.createRadialGradient(512, 420, 60, 512, 512, 720);
-  g.addColorStop(0, "#38bdf8"); g.addColorStop(0.45, "#1e3a8a"); g.addColorStop(1, "#030712");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, 1024, 1024);
-  for (let i = 0; i < 90; i++) {
-    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.35})`;
-    ctx.beginPath(); ctx.arc(Math.random() * 1024, Math.random() * 1024, Math.random() * 3 + 1, 0, Math.PI * 2); ctx.fill();
-  }
-  return c.toDataURL("image/jpeg", 0.95);
+  try { return await Promise.any([fromRender(), fromHorde()]); } catch (e) { return null; }
 }
 
 
