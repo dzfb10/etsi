@@ -24,10 +24,10 @@ header{padding:14px 16px;background:var(--glass);backdrop-filter:blur(16px);bord
 .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:rgba(5,8,20,0.6);border-top:1px solid var(--border)}
 .chip{white-space:nowrap;background:rgba(30,41,59,0.7);color:#cbd5e1;border:1px solid var(--border);padding:8px 14px;border-radius:22px;font-size:12px;cursor:pointer;transition:.2s}
 .chip:active,.icon-btn:active,.pill:active{transform:scale(0.94)}
-footer{padding:10px 12px;background:var(--glass);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
-#inp{flex:1;background:rgba(15,23,42,0.9);border:1px solid var(--border);color:#fff;padding:12px 16px;border-radius:24px;font-size:14px;outline:none}
+footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+#inp{flex:1;min-width:0;background:rgba(15,23,42,0.9);border:1px solid var(--border);color:#fff;padding:12px 16px;border-radius:24px;font-size:14px;outline:none}
 #inp:focus{border-color:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,0.25)}
-.icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:rgba(30,41,59,0.85);color:#38bdf8;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:rgba(30,41,59,0.85);color:#38bdf8;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 #sendBtn{background:var(--grad);color:#fff;border:none;box-shadow:0 4px 12px rgba(99,102,241,0.4)}
 </style>
 </head>
@@ -40,7 +40,7 @@ footer{padding:10px 12px;background:var(--glass);backdrop-filter:blur(16px);bord
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(MODERN AI v6.0)</b></div>
+  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(ULTRA HD PRO v7.0)</b></div>
 </div>
 <div class="chips">
   <button type="button" class="chip" data-p="صمم صورة سيارة رياضية مستقبلية في الغروب 8K">🎨 تصميم صورة AI</button>
@@ -85,10 +85,10 @@ async function makePureAIImage(prompt) {
   } catch (e) {}
 
   try {
-    const enQ = /سيار|سباق/i.test(prompt) ? "futuristic hypercar neon night, 8k digital art" : "epic futuristic cyber city sunset, 8k digital art";
+    const enQ = /سيار|سباق/i.test(prompt) ? "futuristic hypercar neon night, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus" : "epic futuristic cyber city sunset, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus";
     const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
       method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 512, height: 512, steps: 14, n: 1 } })
+      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 1024, height: 1024, steps: 25, n: 1 } })
     });
     const hid = (await hr.json()).id;
     const i0 = "[" + "0" + "]";
@@ -112,16 +112,16 @@ async function makeVideo(src, box) {
   box.innerHTML = "🎬 جاري إنتاج الفيديو بالذكاء الاصطناعي...";
   const im = new Image(); im.crossOrigin = "anonymous";
   await new Promise(r => { im.onload = r; im.onerror = r; im.src = src; });
-  const c = document.createElement("canvas"); c.width = 512; c.height = 512;
-  const ctx = c.getContext("2d"); const rec = new MediaRecorder(c.captureStream(30));
+  const c = document.createElement("canvas"); c.width = 1024; c.height = 1024;
+  const ctx = c.getContext("2d"); const rec = new MediaRecorder(c.captureStream(60), { videoBitsPerSecond: 8000000 });
   const chunks = []; rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   rec.start();
   for (let f = 0; f < 75; f++) {
     const sc = 1 + (f / 75) * 0.15;
-    ctx.save(); ctx.translate(256, 256); ctx.scale(sc, sc); ctx.translate(-256, -256);
-    ctx.drawImage(im, 0, 0, 512, 512); ctx.restore();
-    if (logoImg) ctx.drawImage(logoImg, 410, 20, 80, 80);
-    await new Promise(r => setTimeout(r, 33));
+    ctx.save(); ctx.translate(512, 512); ctx.scale(sc, sc); ctx.translate(-512, -512);
+    ctx.drawImage(im, 0, 0, 1024, 1024); ctx.restore();
+    if (logoImg) ctx.drawImage(logoImg, 860, 30, 130, 130);
+    await new Promise(r => setTimeout(r, 16));
   }
   rec.stop(); await new Promise(r => { rec.onstop = r; });
   const v = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
