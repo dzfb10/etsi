@@ -145,7 +145,7 @@ async function fetchBestImage(promptTxt, seedNum) {
 
   // 1. خادمك السريع على Render (4-Step FLUX)
   const fromRender = async () => {
-    const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 16000);
     const r = await fetch(API + "/api/image", {
       method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json" },
@@ -292,7 +292,7 @@ async function sendMsg() {
     if (isVid) {
       b.innerHTML = `🧠 جاري تحليل الأسلوب وتوليد الفيديو بالذكاء الاصطناعي (${sec} ثوانٍ)...`;
       try {
-        const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
+        const ac = new AbortController(); setTimeout(() => ac.abort(), 16000);
         const vr = await fetch(API + "/api/video", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: val, duration: sec }) });
         if (vr.ok) {
           const vb = await vr.blob();
@@ -339,6 +339,67 @@ async function sendMsg() {
 
 document.getElementById("send").onclick = sendMsg;
 inp.onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } };
+
+// === SMART MERGED JS FEATURES ===
+function bindChips() { document.querySelectorAll(".chip").forEach(c => c.onclick = () => { inp.value = c.dataset.p; sendMsg(); }); }
+bindChips();
+
+function saveSession(title, html) {
+  if (!title) return;
+  sessions.unshift({ title: title.slice(0, 36), html });
+  sessions = sessions.slice(0, 15);
+  localStorage.setItem("dh_sessions", JSON.stringify(sessions));
+  renderHist();
+}
+async function applyLogo(url) {
+  const logo = localStorage.getItem("dh_logo");
+  if (!logo) return url;
+  try {
+    const im = await new Promise(res => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => res(i); i.onerror = () => res(null); i.src = url; });
+    const lm = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = logo; });
+    if (!im) return url;
+    const c = document.createElement("canvas"); c.width = im.width; c.height = im.height;
+    const ctx = c.getContext("2d"); ctx.drawImage(im, 0, 0);
+    const sz = Math.round(im.width * 0.12);
+    ctx.drawImage(lm, im.width - sz - 16, im.height - sz - 16, sz, sz);
+    return c.toDataURL("image/jpeg", 0.93);
+  } catch (e) { return url; }
+}
+async function generateZeroFailImage(promptTxt, seedNum) {
+  for (let tryNum = 0; tryNum < 2; tryNum++) {
+    try {
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
+      const r = await fetch(API + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: promptTxt, seed: seedNum + tryNum }) });
+      if (r.ok) { const b = await r.blob(); if (b.size > 4000) return URL.createObjectURL(b); }
+    } catch (e) {}
+    await new Promise(res => setTimeout(res, 600));
+  }
+  if (window.puter && puter.ai && puter.ai.txt2img) {
+    try { const imgEl = await puter.ai.txt2img(promptTxt + ", photorealistic 8k, cinematic lighting"); if (imgEl && imgEl.src) return imgEl.src; } catch (e) {}
+  }
+  return null;
+}
+async function makeCinemaVideo(imgUrl, bubble, sec) {
+  const im = await new Promise(res => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => res(i); i.onerror = () => res(null); i.src = imgUrl; });
+  if (!im) { bubble.innerHTML = "⚠️ تعذر معالجة الإطار."; return; }
+  const W = 512, H = 512, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+  const rec = new MediaRecorder(c.captureStream(30), { mimeType: "video/webm" });
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  rec.onstop = () => {
+    const u = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
+    bubble.innerHTML = `<video src="${u}" controls autoplay loop playsinline></video><div class="actions"><a class="act-btn" href="${u}" download="DarkHorizon_Cinema.webm">⬇️ تحميل الفيلم</a></div>`;
+  };
+  rec.start();
+  let f = 0; const total = sec * 30;
+  const iv = setInterval(() => {
+    const p = f / total, z = 1.0 + p * 0.12, pan = Math.sin(p * Math.PI) * -14;
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(im, (W - W * z) / 2 + pan, (H - H * z) / 2, W * z, H * z);
+    if (++f >= total) { clearInterval(iv); rec.stop(); }
+  }, 1000 / 30);
+}
 </script>
 </body>
 </html>

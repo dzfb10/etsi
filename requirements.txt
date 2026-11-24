@@ -1,6 +1,9 @@
-flask
-gunicorn
-requests
-edge-tts
 Pillow
+ddgs
+edge-tts
+flask
+gradio_client
+gunicorn
 huggingface_hub
+pillow
+requests

@@ -176,5 +176,152 @@ def api_tts():
         return Response(asyncio.run(gen()), mimetype="audio/mpeg", headers=cors())
     except Exception: return ("", 500, cors())
 
+
+
+# === SMART MERGED FEATURES ===
+def save_memory(q, a):
+    u, k = os.environ.get("SUPABASE_URL", "").strip(), os.environ.get("SUPABASE_KEY", "").strip()
+    if not u or not k: return
+    try:
+        requests.post(f"{u}/rest/v1/archives",
+            headers={"apikey": k, "Authorization": f"Bearer {k}", "Content-Type": "application/json", "Prefer": "return=minimal"},
+            json={"prompt": q[:1500], "response": a[:4000]}, timeout=4)
+    except Exception: pass
+
+def recall_memory():
+    u, k = os.environ.get("SUPABASE_URL", "").strip(), os.environ.get("SUPABASE_KEY", "").strip()
+    if not u or not k: return ""
+    try:
+        r = requests.get(f"{u}/rest/v1/archives?select=prompt,response&order=id.desc&limit=5",
+            headers={"apikey": k, "Authorization": f"Bearer {k}"}, timeout=4)
+        if r.status_code == 200 and r.json():
+            return "\n[STUDIO MEMORY]:\n" + "\n".join(f"- {i.get('prompt','')[:100]} -> {i.get('response','')[:140]}" for i in r.json())
+    except Exception: pass
+    return ""
+
+def web_search(q):
+    sl, chunks = chr(47), []
+    lang = "ar" if any("\u0600" <= c <= "\u06FF" for c in q) else "en"
+    try:
+        wu = f"https:{sl}{sl}{lang}.wikipedia.org{sl}w{sl}api.php"
+        wr = requests.get(wu, params={"action": "query", "list": "search", "srsearch": q, "format": "json", "srlimit": 2},
+            headers={"User-Agent": "DarkHorizonFilms/11.0"}, timeout=4)
+        if wr.status_code == 200:
+            for item in (wr.json().get("query") or {}).get("search") or []:
+                snip = item.get("snippet", "").replace('<span class="searchmatch">', "").replace("</span>", "")
+                chunks.append(f"[Wikipedia - {item.get('title')}]: {snip}")
+    except Exception: pass
+
+    tk = os.environ.get("TAVILY_API_KEY", "").strip()
+    if tk:
+        try:
+            u = "https:" + sl + sl + "api." + "tavily.com" + sl + "search"
+            r = requests.post(u, json={"api_key": tk, "query": q, "max_results": 3}, timeout=6)
+            if r.status_code == 200 and r.json().get("results"):
+                for x in r.json()["results"]: chunks.append(f"[Web - {x.get('title')}]: {x.get('content','')[:240]}")
+        except Exception: pass
+    return "\n".join(chunks)
+
+def fetch_real_reference_image(query_ar):
+    sl = chr(47)
+    # تحويل الاسم العربي إلى مصطلح البحث الدقيق في Wikimedia Commons
+    en_q = llm_think([
+        {"role": "system", "content": "Extract ONLY the exact English Wikipedia/Wikimedia title for this landmark, person, object, or place (e.g. 'Maqam Echahid', 'Mercedes-AMG GT', 'Constantine bridges'). Output ONLY the exact title."},
+        {"role": "user", "content": query_ar}
+    ], temp=0.1).replace('"', '').strip() or query_ar
+
+    try:
+        api_u = f"https:{sl}{sl}commons.wikimedia.org{sl}w{sl}api.php"
+        params = {
+            "action": "query",
+            "generator": "search",
+            "gsrsearch": f"filetype:bitmap {en_q}",
+            "gsrnamespace": 6,
+            "gsrlimit": 3,
+            "prop": "imageinfo",
+            "iiprop": "url",
+            "iiurlwidth": 1024,
+            "format": "json"
+        }
+        r = requests.get(api_u, params=params, headers={"User-Agent": "DarkHorizonFilms/18.0"}, timeout=6)
+        if r.status_code == 200:
+            pages = (r.json().get("query") or {}).get("pages") or {}
+            for p in pages.values():
+                ii = next(iter(p.get("imageinfo") or []), {})
+                img_u = ii.get("thumburl") or ii.get("url")
+                if img_u and any(ext in img_u.lower() for ext in [".jpg", ".jpeg", ".png"]):
+                    ir = requests.get(img_u, headers={"User-Agent": "DarkHorizonFilms/18.0"}, timeout=8)
+                    if ir.status_code == 200 and len(ir.content) > 15000:
+                        return ir.content, en_q
+    except Exception:
+        pass
+    return None, en_q
+
+def craft_visual_prompt(raw_q):
+    # قاموس هندسي مباشر للمعالم الشهيرة لضمان دقة الشكل المعماري 100%
+    landmarks = {
+        "مقام الشهيد": "Maqam Echahid Martyrs Memorial in Algiers Algeria, three massive curving white concrete fins leaning inward and joining together beneath a small ribbed Islamic dome at the top, no bird, no wings, golden sunset, photorealistic 8k, no text",
+        "القصبة": "Casbah of Algiers old whitewashed Ottoman hillside houses, narrow stepped stone alleys, Mediterranean sea in background, sunny day, photorealistic 8k, no text",
+        "قسنطينة": "Sidi M'Cid suspension bridge in Constantine Algeria spanning a dramatic deep rocky gorge canyon, historic buildings on cliff edge, photorealistic 8k, no text",
+        "وهران": "Santa Cruz fort overlooking Oran bay and Mediterranean coast in Algeria at sunset, photorealistic 8k, no text",
+        "تيمقاد": "Timgad ancient Roman ruins in Algeria with Triumphal Arch of Trajan and stone colonnades at golden hour, photorealistic 8k, no text"
+    }
+    for k, v in landmarks.items():
+        if k in raw_q:
+            return v
+
+    # البحث المرجعي ثم إلزام الذكاء الاصطناعي بوصف الشكل الهندسي والمادي وليس ترجمة الاسم حرفياً
+    ref_context = ""
+    try: ref_context = web_search(raw_q)[:500]
+    except Exception: pass
+
+    sys_dir = (
+        "You are a Visual Concept Director. NEVER translate landmark or object names literally (never write words like 'Martyrs' or 'Monument' alone). "
+        "Instead, describe the EXACT physical geometry, architectural shape, materials, colors, and setting in vivid English (20-30 words). "
+        "Output ONLY the raw English visual description. ZERO quotes, ZERO text/watermarks."
+    )
+    user_payload = f"User Request: {raw_q}\nReference Facts:\n{ref_context}" if ref_context else f"User Request: {raw_q}"
+    en = llm_think([{"role": "system", "content": sys_dir}, {"role": "user", "content": user_payload}], temp=0.15)
+
+    if len(en) > 4:
+        if ":" in en: en = en.split(":")[-1]
+        clean_en = en.replace('"', '').replace("'", "").strip() + ", photorealistic 8k, no text, no letters"
+        threading.Thread(target=save_memory, args=(f"[ARCH_VISUAL] {raw_q}", clean_en), daemon=True).start()
+        return clean_en
+
+    return raw_q + ", photorealistic 8k, no text"
+
+EVOLUTION_TOPICS = [
+    "Unreal Engine 5 Lumen Nanite real-time rendering techniques",
+    "Japanese anime sakuga keyframe animation and cel shading techniques",
+    "Modern AI video diffusion temporal consistency and physics simulation",
+    "Hollywood cinematography lighting, anamorphic lenses, and color grading",
+    "AAA game character rigging, motion capture, and inverse kinematics"
+]
+
+def run_self_evolution_cycle():
+    topic = random.choice(EVOLUTION_TOPICS)
+    research = web_search(topic)
+    if not research: return "no_data"
+    insight = llm_think([
+        {"role": "system", "content": "Summarize these findings into 3 actionable technical rules for filmmaking, anime, game design, and AI:"},
+        {"role": "user", "content": f"Topic: {topic}\nFindings:\n{research}"}
+    ], temp=0.4)
+    if insight:
+        save_memory(f"[AUTO_EVOLUTION] {topic}", insight)
+        return topic
+    return "skipped"
+
+def background_brain_loop():
+    while True:
+        try: run_self_evolution_cycle()
+        except Exception: pass
+        time.sleep(900)
+
+threading.Thread(target=background_brain_loop, daemon=True).start()
+
+def api_evolve():
+    return jsonify({"status": "EVOLVED", "learned_topic": run_self_evolution_cycle()}), 200, cors()
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
