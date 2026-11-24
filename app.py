@@ -1,15 +1,20 @@
 import os, random, requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Flask, request, jsonify, Response
+
 app = Flask(__name__)
 HF_TOKEN = os.environ.get("HF_TOKEN", "").strip()
 SL = chr(47)
 HF_CHAT = f"https:{SL}{SL}router.huggingface.co{SL}v1{SL}chat{SL}completions"
 SCENES = ["black Mercedes AMG GT sports car speeding at golden sunset, 8k", "majestic Arabian stallion in golden desert dunes at sunset, 8k", "futuristic hypercar on neon highway at night, 8k"]
+
 def cors():
     return {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type,Authorization", "Access-Control-Allow-Methods": "GET,POST,OPTIONS"}
+
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"status": "ONLINE", "version": "FINAL-v19.0", "token": bool(HF_TOKEN)}), 200, cors()
+    return jsonify({"status": "ONLINE", "version": "ALL-9-PARALLEL-SWARM-v21", "token": bool(HF_TOKEN)}), 200, cors()
+
 def smart_prompt(q):
     clean = q.replace("صمم", "").replace("صورة", "").replace("صور", "").replace("ارسم", "").strip()
     if len(clean) < 2: return random.choice(SCENES)
@@ -22,16 +27,27 @@ def smart_prompt(q):
             if t: return t
     except Exception: pass
     return f"cinematic ultra-photorealistic shot of {clean}, golden hour lighting, sharp focus, 8k"
+
+def call_hf_model(mdl, en_p):
+    url = f"https:{SL}{SL}router.huggingface.co{SL}hf-inference{SL}models{SL}{mdl}"
+    r = requests.post(url, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"}, json={"inputs": en_p}, timeout=24)
+    if r.status_code == 200 and len(r.content) > 6000:
+        return r.content
+    return None
+
 @app.route("/api/image", methods=["POST", "OPTIONS"])
 def api_image():
     if request.method == "OPTIONS": return ("", 204, cors())
     en_p = smart_prompt((request.get_json(silent=True) or {}).get("prompt", ""))
-    for m in ["black-forest-labs/FLUX.1-schnell", "stabilityai/stable-diffusion-xl-base-1.0"]:
-        try:
-            r = requests.post(f"https:{SL}{SL}router.huggingface.co{SL}hf-inference{SL}models{SL}{m}", headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"}, json={"inputs": en_p}, timeout=25)
-            if r.status_code == 200 and len(r.content) > 6000: return Response(r.content, mimetype="image/png", headers=cors())
-        except Exception: continue
+    models = ["black-forest-labs/FLUX.1-schnell", "black-forest-labs/FLUX.1-dev", "ByteDance/SDXL-Lightning", "stabilityai/stable-diffusion-xl-base-1.0"]
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        futs = [ex.submit(call_hf_model, m, en_p) for m in models]
+        for fut in as_completed(futs):
+            img_bytes = fut.result()
+            if img_bytes:
+                return Response(img_bytes, mimetype="image/png", headers=cors())
     return jsonify({"error": "busy"}), 503, cors()
+
 @app.route("/api/chat", methods=["POST", "OPTIONS"])
 def api_chat():
     if request.method == "OPTIONS": return ("", 204, cors())
@@ -44,4 +60,6 @@ def api_chat():
             return jsonify({"reply": r.json()["choices"][i0]["message"]["content"]}), 200, cors()
     except Exception: pass
     return jsonify({"reply": "⚡ الخادم نشط وجاهز!"}), 200, cors()
-if __name__ == "__main__": app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
