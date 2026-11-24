@@ -50,7 +50,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853-FLUX)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD FINAL-MASTER-v15)</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -91,7 +91,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853-FLUX)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD FINAL-MASTER-v15)</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
@@ -353,7 +353,7 @@ inp.onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(
 </script>
 <script>
 const HORDE_API = String.fromCharCode(104,116,116,112,115,58,47,47,115,116,97,98,108,101,104,111,114,100,101,46,110,101,116,47,97,112,105,47,118,50);
-const CF_WORKER = "\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x61\x72\x6b\x2d\x68\x6f\x72\x69\x7a\x6f\x6e\x2d\x61\x69\x2e\x6f\x6e\x72\x65\x6e\x64\x65\x72\x2e\x63\x6f\x6d";
+const CF_WORKER = "https://dark-horizon-ai.onrender.com/api";
 
 
 fetch(CF_WORKER + "/", { mode: "no-cors" }).catch(() => {});
@@ -480,35 +480,24 @@ async function generateViaGlobalHorde(enPrompt) {
 }
 
 async function generateSuperImage(rawPrompt) {
-  const enPrompt = buildProVisualPrompt(rawPrompt);
-  const racers = [
-    generateViaGlobalHorde(enPrompt),
-    (async () => {
-      const r = await fetch(CF_WORKER + "/image", {
-        method: "POST",
+  for (let t = 1; t <= 3; t++) {
+    try {
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
+      const r = await fetch("https://dark-horizon-ai.onrender.com/api/image", {
+        method: "POST", signal: ac.signal,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: enPrompt, width: 896, height: 896 })
+        body: JSON.stringify({ prompt: rawPrompt || "black Mercedes AMG GT at golden sunset, 8k" })
       });
-      if (!r.ok) throw new Error("cf_fail");
-      const d = await r.json();
-      if (d && d.image_url) return { url: d.image_url, engine: d.engine || "Cloudflare-FLUX" };
-      throw new Error("cf_empty");
-    })(),
-    (async () => {
-      if (!window.puter || !puter.ai || !puter.ai.txt2img) throw new Error("noputer");
-      const el = await puter.ai.txt2img(enPrompt, { model: "google/imagen-4.0-ultra" });
-      if (el && el.src) return { url: el.src, engine: "Google-Imagen-4-Ultra" };
-      throw new Error("empty");
-    })()
-  ];
-  try {
-    const win = await Promise.any(racers);
-    win.url = await applyLogoLightweight(win.url);
-    return win;
-  } catch (e) {
-    return null;
+      if (r.ok) {
+        const b = await r.blob();
+        if (b.size > 6000) return { url: URL.createObjectURL(b), engine: "FLUX.1-1024" };
+      }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 3000));
   }
+  return null;
 }
+
 async function instantGlobalChat(userPrompt) {
   const sys = "أنت DARK HORIZON AI، مساعد ذكاء اصطناعي خبير تتحدث بالعربية بطلاقة ووضوح.";
   const chatRacers = [
@@ -694,27 +683,6 @@ window.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-<script>
-const _origGenerateSuperImage = window.generateSuperImage;
-window.generateSuperImage = async function(rawPrompt) {
-  const api = "https://onrender.com";
-  for (let t = 1; t <= 3; t++) {
-    try {
-      const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
-      const r = await fetch(api, {
-        method: "POST", signal: ac.signal,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: rawPrompt || "majestic Arabian stallion running in golden desert dunes at sunset, 8k" })
-      });
-      if (r.ok) {
-        const b = await r.blob();
-        if (b.size > 6000) return { url: URL.createObjectURL(b), engine: "FLUX.1-1024" };
-      }
-    } catch (e) {}
-    await new Promise(r => setTimeout(r, 3500));
-  }
-  return _origGenerateSuperImage ? await _origGenerateSuperImage(rawPrompt) : null;
-};
-</script>
+
 </body>
 </html>
