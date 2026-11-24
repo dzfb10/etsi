@@ -1,4 +1,4 @@
-import os, random, base64, requests
+import os, time, random, base64, requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Flask, request, jsonify, Response
 
@@ -31,6 +31,27 @@ def smart_prompt(q):
     except Exception: pass
     return f"cinematic ultra-photorealistic shot of {clean}, golden hour lighting, sharp focus, 8k"
 
+
+def call_open_horde(en_p):
+    try:
+        u_async = f"https:{SL}{SL}stablehorde.net{SL}api{SL}v2{SL}generate{SL}async"
+        r = requests.post(u_async, headers={"Content-Type": "application/json", "apikey": "0000000000"},
+            json={"prompt": en_p + " ### blurry, low quality", "params": {"width": 512, "height": 512, "steps": 16, "n": 1}}, timeout=10)
+        hid = r.json().get("id")
+        if not hid: return None
+        u_stat = f"https:{SL}{SL}stablehorde.net{SL}api{SL}v2{SL}generate{SL}status{SL}{hid}"
+        for _ in range(14):
+            time.sleep(1.5)
+            st = requests.get(u_stat, timeout=8).json()
+            gens = st.get("generations") or []
+            if st.get("done") and gens and gens.get("img"):
+                img_u = gens.get("img")
+                if img_u.startswith("http"):
+                    return requests.get(img_u, timeout=12).content
+                return base64.b64decode(img_u)
+    except Exception: pass
+    return None
+
 def call_hf(mdl, en_p):
     try:
         r = requests.post(HF_INF + mdl, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"}, json={"inputs": en_p}, timeout=24)
@@ -52,7 +73,7 @@ def api_image():
     en_p = smart_prompt((request.get_json(silent=True) or {}).get("prompt", ""))
     models = ["black-forest-labs/FLUX.1-schnell", "black-forest-labs/FLUX.1-dev", "ByteDance/SDXL-Lightning", "stabilityai/stable-diffusion-xl-base-1.0"]
     with ThreadPoolExecutor(max_workers=5) as ex:
-        futs = [ex.submit(call_hf, m, en_p) for m in models] + [ex.submit(call_cf, en_p)]
+        futs = [ex.submit(call_hf, m, en_p) for m in models] + [ex.submit(call_cf, en_p), ex.submit(call_open_horde, en_p)]
         for fut in as_completed(futs):
             img = fut.result()
             if img: return Response(img, mimetype="image/png", headers=cors())
