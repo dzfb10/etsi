@@ -38,7 +38,49 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:120;align-items:center;justify-content:center;padding:16px}
 #lightbox img{max-width:100%;max-height:92vh;border-radius:12px}
 </style>
-<link rel="manifest" href="manifest.json"><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script></head>
+<link rel="manifest" href="manifest.json"><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+<script>
+(function(){
+  
+  const RD_S = "https://onrender.com";
+  const SL = String.fromCharCode(47);
+  fetch(RD_S + SL).catch(()=>{});
+
+  window._dhSmartImg = async function(q) {
+    let clean = (q || "").replace(/صمم|صورة|صور|ارسم|انتج|فيديو|فيلم/g, "").trim() || "black Mercedes AMG GT sports car at golden sunset, 8k raw photograph";
+    if (!/[a-zA-Z]{4,}/.test(clean)) {
+      try {
+        const td = await (await fetch("https:" + SL + SL + "api.mymemory.translated.net" + SL + "get?q=" + encodeURIComponent(clean) + "&langpair=ar|en")).json();
+        if (td && td.responseData && td.responseData.translatedText) clean = td.responseData.translatedText;
+      } catch (e) {}
+    }
+    const enP = clean + ", RAW candid photograph, 85mm f/1.4 lens, sharp focus, 8k uhd";
+    const trySrv = async (base) => {
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 20000);
+      const r = await fetch(base + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: enP }) });
+      if (!r.ok) throw 1;
+      const b = await r.blob(); if (b.size < 6000) throw 1;
+      return URL.createObjectURL(b);
+    };
+    try { return await Promise.any([trySrv(RD_S)]); } catch (e) {
+      const hr = await fetch("https:" + SL + SL + "stablehorde.net" + SL + "api" + SL + "v2" + SL + "generate" + SL + "async", {
+        method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
+        body: JSON.stringify({ prompt: enP + " ### blurry, cartoon, watermark", models: ["Juggernaut XL", "AlbedoBase XL (SDXL)"], params: { width: 512, height: 512, steps: 18, n: 1 } })
+      });
+      const hid = (await hr.json()).id;
+      for (let i = 0; i < 20; i++) {
+        await new Promise(r => setTimeout(r, 1500));
+        const st = await (await fetch("https:" + SL + SL + "stablehorde.net" + SL + SL + "api" + SL + SL + "v2" + SL + SL + "generate" + SL + SL + "status" + SL + hid)).json();
+        const g = st.generations && st.generations.at(0);
+        if (st.done && g && g.img) return g.img;
+      }
+      throw new Error("busy");
+    }
+  };
+})();
+</script>
+
+</head>
 <body>
 <div id="lightbox" onclick="this.style.display='none'"><img id="lbImg" src=""></div>
 <aside id="side">
@@ -50,7 +92,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS MERGED v4051)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS MERGED v4051 (TURBO-FIXED))</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -91,7 +133,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS MERGED v4051)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS MERGED v4051 (TURBO-FIXED))</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
