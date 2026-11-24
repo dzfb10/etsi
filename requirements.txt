@@ -1,9 +1,6 @@
-Pillow
-ddgs
-edge-tts
 flask
-gradio_client
 gunicorn
-huggingface_hub
-pillow
 requests
+edge-tts
+Pillow
+huggingface_hub
