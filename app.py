@@ -43,6 +43,16 @@ def build_cinema_prompt(q):
         except Exception: continue
     return "RAW candid photograph of " + clean + ", shot on ARRI Alexa 65, 85mm f/1.4 lens, golden hour lighting, sharp details, 8k uhd"
 
+def call_cf(en_p):
+    if not (CF_ACC and CF_TOK): return None
+    try:
+        u = "https:" + S + S + "://cloudflare.com" + S + "client" + S + "v4" + S + "accounts" + S + CF_ACC + S + "ai" + S + "run" + S + "@cf" + S + "black-forest-labs" + S + "flux-1-schnell"
+        r = requests.post(u, headers={"Authorization": "Bearer " + CF_TOK, "Content-Type": "application/json"}, json={"prompt": en_p}, timeout=25)
+        b64 = r.json().get("result", {}).get("image") if r.status_code == 200 else None
+        import base64
+        return base64.b64decode(b64) if b64 else None
+    except Exception: return None
+
 def call_hf(mdl, en_p):
     try:
         r = requests.post(HF_INF + mdl, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"}, json={"inputs": en_p}, timeout=30)
@@ -55,7 +65,7 @@ def api_image():
     en_p = build_cinema_prompt((request.get_json(silent=True) or {}).get("prompt", ""))
     models = ["black-forest-labs/FLUX.1-dev", "black-forest-labs/FLUX.1-schnell", "HiDream-ai/HiDream-I1-Full", "Qwen/Qwen-Image", "stabilityai/stable-diffusion-3.5-large"]
     with ThreadPoolExecutor(max_workers=5) as ex:
-        futs = [ex.submit(call_hf, m, en_p) for m in models]
+        futs = [ex.submit(call_hf, m, en_p) for m in models] + [ex.submit(call_cf, en_p)]
         for fut in as_completed(futs):
             img = fut.result()
             if img: return Response(img, mimetype="image/png", headers=cors())
