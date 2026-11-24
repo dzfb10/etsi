@@ -5,14 +5,14 @@ header{padding:10px 14px;background:#0b1222;border-bottom:1px solid #1e293b;disp
 .brand{font-weight:900;font-size:14px;color:#38bdf8;display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:#10b981}
 .hbtn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:5px 10px;border-radius:9px;font-size:12px;cursor:pointer}
 #chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:11px}.msg{max-width:88%;padding:11px 13px;border-radius:15px;font-size:14px;line-height:1.55;word-wrap:break-word}
-.user{align-self:flex-start;background:#2563eb;color:#fff}.bot{align-self:flex-end;background:#111a2e;border:1px solid #1e293b}.pic{width:100%;max-width:330px;border-radius:11px;display:block}
+.user{align-self:flex-start;background:#2563eb;color:#fff}.bot{align-self:flex-end;background:#111a2e;border:1px solid #1e293b}.pic{width:100%;max-width:330px;max-height:255px;object-fit:cover;border-radius:11px;display:block}
 .bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.abtn{background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer}
 .qbar{display:flex;gap:6px;overflow-x:auto;padding:7px 10px;background:#080e1c;border-top:1px solid #1e293b}.qchip{white-space:nowrap;background:#111c33;color:#cbd5e1;border:1px solid #233354;padding:6px 11px;border-radius:16px;font-size:11px;cursor:pointer}}
 footer{padding:8px 9px;flex-wrap:nowrap;background:#0b1222;border-top:1px solid #1e293b;display:flex;gap:6px;align-items:center}#inp{flex:1;min-width:0;background:#111a2e;border:1px solid #334155;color:#fff;padding:10px 13px;border-radius:20px;font-size:14px;outline:none}
 .cbtn{width:37px;height:37px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#38bdf8;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}#sendBtn{background:#2563eb;color:#fff;border:none}
 </style></head><body>
 <header><div class="brand"><span class="dot"></span> DARK HORIZON FILMS ✦</div><div style="display:flex;gap:5px"><button type="button" class="hbtn" id="btnNew">+ جديد</button><button type="button" class="hbtn" id="btnProj">🗂</button></div></header>
-<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(OMNI-BRAIN WORLD-ARCHIVE v29.0)</span></div></div>
+<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(NEXT-GEN-AI-MODELS v32.0)</span></div></div>
 <div class="qbar"><button type="button" class="qchip" data-p="صمم صورة سيارة مرسيدس خارقة في الغروب 8K">🎨 صورة 8K</button><button type="button" class="qchip" data-p="انتج فيديو سينمائي لمدينة مستقبلية">🎬 فيديو AI</button><button type="button" class="qchip" id="btnRemix">🪄 تعديل صورة</button><button type="button" class="qchip" id="btnLogo">🏷 رفع اللوغو</button></div>
 <footer><button type="button" class="cbtn" id="btnPlus">+</button><button type="button" class="cbtn" id="btnMic">🎙</button><input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود..."><button type="button" class="cbtn" id="sendBtn">➤</button></footer>
 <input type="file" id="fIn" accept="image/*,video/*" hidden><input type="file" id="fLogo" accept="image/*" hidden>
@@ -31,7 +31,7 @@ async function fetchBestImage(p) {
       if (td && td.responseData && td.responseData.translatedText) enPrompt = td.responseData.translatedText;
     } catch (e) {}
   }
-  enPrompt = enPrompt.replace(/design a picture of|create an image of|photo of/gi, "").trim() + ", hyper-realistic 8k cinema photography, sharp focus, dramatic lighting";
+  enPrompt = enPrompt.replace(/design a picture of|create an image of|photo of/gi, "").trim() + ", RAW candid photograph, shot on Canon EOS R5, 85mm f/1.4 lens, sharp focus, realistic reflections, natural lighting, 8k uhd";
 
   const raceRender = async () => {
     const ac = new AbortController(); setTimeout(() => ac.abort(), 30000);
@@ -39,19 +39,14 @@ async function fetchBestImage(p) {
     if (!r.ok) throw new Error("render"); const b = await r.blob(); if (b.size < 6000) throw new Error("small"); return URL.createObjectURL(b);
   };
   const raceHorde = async () => {
-    const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
-      method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enPrompt + " ### blurry, cartoon", models: ["Juggernaut XL", "AlbedoBase XL (SDXL)", "DreamShaper XL", "EpicRealism"], params: { width: 512, height: 512, steps: 18, n: 1 } })
-    });
-    if (!hr.ok) throw new Error("horde"); const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
-    for (let i = 0; i < 20; i++) {
-      await new Promise(r => setTimeout(r, 1500));
-      const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
-      const g = st.generations && eval("st.generations" + i0); if (st.done && g && g.img) return g.img;
-    }
-    throw new Error("timeout");
+    const u = "https:" + s + s + "image.pollinations.ai" + s + "prompt" + s + encodeURIComponent(enPrompt) + "?width=1024&height=1024&model=flux&nologo=true&seed=" + Math.floor(Math.random()*999999);
+    const r = await fetch(u);
+    if (!r.ok) throw new Error("poll");
+    const b = await r.blob();
+    if (b.size < 10000) throw new Error("small");
+    return URL.createObjectURL(b);
   };
-  return await Promise.any([raceRender(), raceHorde()]);
+  try { return await raceRender(); } catch (e) { return await raceHorde(); }
 }
 function upscale2K(u, box) {
   const im = new Image(); im.crossOrigin = "anonymous";
@@ -64,8 +59,26 @@ function upscale2K(u, box) {
   }; im.src = u;
 }
 async function buildVid(u, box) {
-  box.innerHTML = "🎬 جاري إنتاج الفيديو..."; const im = new Image(); im.crossOrigin = "anonymous";
+  box.innerHTML = "🎬 جاري الرندر السينمائي على حاسوبك السحابي (FFmpeg 1080p 60FPS MP4)...";
+  const im = new Image(); im.crossOrigin = "anonymous";
   await new Promise(r => { im.onload = r; im.onerror = r; im.src = u; });
+  try {
+    const tc = document.createElement("canvas"); tc.width = im.naturalWidth || 1024; tc.height = im.naturalHeight || 1024;
+    tc.getContext("2d").drawImage(im, 0, 0, tc.width, tc.height);
+    const b64 = tc.toDataURL("image/png");
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
+    const r = await fetch("https://lhr.life/render_video", {
+      method: "POST", signal: ac.signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: b64 })
+    });
+    if (r.ok) {
+      const mp4Url = URL.createObjectURL(await r.blob());
+      box.innerHTML = `<video class="pic" src="${mp4Url}" controls autoplay loop muted playsinline></video><div class="bar"><button type="button" class="abtn dlV">⬇️ حفظ الفيديو 1080p MP4</button></div>`;
+      box.querySelector(".dlV").onclick = () => dlFile(mp4Url, "DarkHorizon_1080p_60FPS.mp4");
+      return;
+    }
+  } catch (e) {}
   const c = document.createElement("canvas"); c.width = 640; c.height = 640;
   const ctx = c.getContext("2d"), rec = new MediaRecorder(c.captureStream(30), { videoBitsPerSecond: 2500000 }), ch = [];
   rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); }; rec.start();
