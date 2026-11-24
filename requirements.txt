@@ -1,0 +1,6 @@
+flask
+gunicorn
+requests
+edge-tts
+Pillow
+huggingface_hub
