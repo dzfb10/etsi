@@ -16,7 +16,7 @@ def cors():
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"status": "ONLINE", "version": "OMNIVERSE-ALL-IN-ONE-v23", "hf": bool(HF_TOKEN), "cf": bool(CF_ACC and CF_TOK)}), 200, cors()
+    return jsonify({"status": "ONLINE", "version": "ULTIMATE-ALL-TERMUX-FEATURES-v24", "hf": bool(HF_TOKEN), "cf": bool(CF_ACC and CF_TOK)}), 200, cors()
 
 def smart_prompt(q):
     clean = q.replace("صمم", "").replace("صورة", "").replace("صور", "").replace("ارسم", "").strip()
@@ -77,5 +77,21 @@ def api_chat():
             return jsonify({"reply": r.json()["choices"][i0]["message"]["content"]}), 200, cors()
     except Exception: pass
     return jsonify({"reply": "⚡ الخادم نشط وجاهز!"}), 200, cors()
+
+
+@app.route("/api/remix", methods=["POST", "OPTIONS"])
+def api_remix():
+    if request.method == "OPTIONS": return ("", 204, cors())
+    data = request.get_json(silent=True) or {}
+    img_b64 = data.get("image", "").split(",")[-1]
+    en_p = smart_prompt(data.get("prompt", "cinematic golden hour style"))
+    try:
+        r = requests.post(HF_INF + "timbrooks/instruct-pix2pix",
+            headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"},
+            json={"inputs": img_b64, "parameters": {"prompt": en_p}}, timeout=28)
+        if r.status_code == 200 and len(r.content) > 5000:
+            return Response(r.content, mimetype="image/png", headers=cors())
+    except Exception: pass
+    return jsonify({"fallback": True}), 202, cors()
 
 if __name__ == "__main__": app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
