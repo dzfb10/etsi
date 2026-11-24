@@ -50,7 +50,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD FINAL-MASTER-v15)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-NO-OVERLAY-v16)</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -70,7 +70,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
 </div>
 <script>
 const s = String.fromCharCode(47);
-const API = "https:" + s + s + "dark-horizon-ai." + "onrender.com";
+const API = "https://dark-horizon-ai.onrender.com";
 fetch(API + "/").catch(() => {});
 
 const chat = document.getElementById("chat"), inp = document.getElementById("inp"), menu = document.getElementById("menu"), side = document.getElementById("side");
@@ -91,7 +91,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD FINAL-MASTER-v15)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-NO-OVERLAY-v16)</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
@@ -386,40 +386,7 @@ function addMsg(h, c) {
   return d;
 }
 
-async function applyLogoLightweight(imgUrl) {
-  return await new Promise(res => {
-    const im = new Image(); im.crossOrigin = "anonymous";
-    im.onload = async () => {
-      const c = document.createElement("canvas");
-      c.width = 896; c.height = 896;
-      const ctx = c.getContext("2d");
-      ctx.drawImage(im, 0, 0, 896, 896);
-      const customLogo = localStorage.getItem("dh_media_logo");
-      if (customLogo) {
-        await new Promise(r2 => {
-          const lm = new Image();
-          lm.onload = () => {
-            ctx.save(); ctx.globalAlpha = 0.92;
-            ctx.beginPath(); ctx.roundRect(790, 790, 82, 82, 16); ctx.clip();
-            ctx.drawImage(lm, 790, 790, 82, 82); ctx.restore(); r2();
-          };
-          lm.onerror = () => r2(); lm.src = customLogo;
-        });
-      } else {
-        ctx.save();
-        ctx.fillStyle = "rgba(6, 9, 19, 0.78)";
-        ctx.beginPath(); ctx.roundRect(686, 834, 188, 38, 10); ctx.fill();
-        ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 1.5; ctx.stroke();
-        ctx.fillStyle = "#38bdf8"; ctx.font = "bold 15px sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("DARK HORIZON ✦", 780, 858);
-        ctx.restore();
-      }
-      res(c.toDataURL("image/jpeg", 0.92));
-    };
-    im.onerror = () => res(imgUrl);
-    im.src = imgUrl;
-  });
-}
+async function applyLogoLightweight(imgUrl) { return imgUrl; }
 
 function buildProVisualPrompt(rawText) {
   const dict = {
