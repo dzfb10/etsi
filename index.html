@@ -34,7 +34,7 @@ footer{padding:9px 10px;background:#0b1222;border-top:1px solid #1e293b;display:
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(MASTER v18.0 · FLUX.1 1024px)</span></div>
+  <div class="msg bot">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(TURBO v18.1 · FLUX.1 1024px)</span></div>
 </div>
 <footer>
   <button type="button" class="cbtn" id="btnPlus">+</button>
@@ -59,9 +59,9 @@ function downloadFile(url, name) {
 
 async function fetchFluxImage(prompt) {
   const s = String.fromCharCode(47);
-  for (let t = 1; t <= 2; t++) {
+  for (let t = 1; t <= 1; t++) {
     try {
-      const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 18000);
       const r = await fetch(SRV + "/api/image", {
         method: "POST", signal: ac.signal,
         headers: { "Content-Type": "application/json" },
@@ -72,7 +72,7 @@ async function fetchFluxImage(prompt) {
   }
   const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
     method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-    body: JSON.stringify({ prompt: "RAW photograph of " + prompt + ", 8k uhd, sharp focus", models: ["ICBINP - I Can't Believe It's Not Photography", "AbsoluteReality"], params: { width: 512, height: 512, steps: 24, n: 1 } })
+    body: JSON.stringify({ prompt: "RAW photograph of " + prompt + ", 8k uhd, sharp focus", models: ["ICBINP - I Can't Believe It's Not Photography", "AbsoluteReality"], params: { width: 512, height: 512, steps: 14, n: 1 } })
   });
   const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
   for (let i = 0; i < 22; i++) {
@@ -146,7 +146,7 @@ async function handleInput(txt) {
 document.getElementById("sendBtn").onclick = () => handleInput(inp.value);
 inp.onkeydown = e => { if (e.key === "Enter") handleInput(inp.value); };
 document.getElementById("btnNew").onclick = () => { chat.innerHTML = "<div class=\"msg bot\">✨ جلسة جديدة جاهزة!</div>"; };
-document.getElementById("btnProj").onclick = () => addMsg("🗂 استوديو <b>DARK HORIZON FILMS MASTER v18.0</b> متصل بالكامل.");
+document.getElementById("btnProj").onclick = () => addMsg("🗂 استوديو <b>DARK HORIZON FILMS TURBO v18.1</b> متصل بالكامل.");
 const fIn = document.getElementById("fIn");
 document.getElementById("btnPlus").onclick = () => fIn.click();
 fIn.onchange = async e => {

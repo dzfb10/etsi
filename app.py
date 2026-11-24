@@ -42,12 +42,20 @@ def api_image():
     if request.method == "OPTIONS": return ("", 204, cors())
     q = (request.get_json(silent=True) or {}).get("prompt", "").strip()
     en_p = smart_prompt(q)
-    try:
-        r = requests.post(HF_FLUX, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"},
-            json={"inputs": en_p}, timeout=35)
-        if r.status_code == 200 and len(r.content) > 6000:
-            return Response(r.content, mimetype="image/png", headers=cors())
-        return jsonify({"error": r.text}), r.status_code, cors()
+    models = [
+        "black-forest-labs/FLUX.1-schnell",
+        "ByteDance/SDXL-Lightning",
+        "stabilityai/stable-diffusion-xl-base-1.0"
+    ]
+    for m in models:
+        try:
+            url = "https://huggingface.co" + m
+            r = requests.post(url, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"},
+                json={"inputs": en_p}, timeout=16)
+            if r.status_code == 200 and len(r.content) > 6000:
+                return Response(r.content, mimetype="image/png", headers=cors())
+        except Exception: continue
+    return jsonify({"error": "busy"}), 503, cors()
     except Exception as e:
         return jsonify({"error": str(e)}), 500, cors()
 
