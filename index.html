@@ -50,7 +50,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-NO-OVERLAY-v16)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-LIVE-100-PERCENT-v17)</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -91,7 +91,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-NO-OVERLAY-v16)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-LIVE-100-PERCENT-v17)</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
