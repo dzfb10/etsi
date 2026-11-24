@@ -40,7 +40,7 @@ footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);borde
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(REAL AI RENDER v7.1)</b></div>
+  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(TURBO HD · INSTANT SAVE v8.0)</b></div>
 </div>
 <div class="chips">
   <button type="button" class="chip" data-p="صمم صورة سيارة رياضية مستقبلية في الغروب 8K">🎨 تصميم صورة AI</button>
@@ -62,6 +62,40 @@ const API = "https://onrender.com";
 const chat = document.getElementById("chat");
 const inp = document.getElementById("inp");
 let logoImg = null;
+
+
+async function upscaleAndSharpenHD(srcUrl) {
+  return await new Promise(res => {
+    const im = new Image(); im.crossOrigin = "anonymous";
+    im.onload = () => {
+      try {
+        const c = document.createElement("canvas"); c.width = 1536; c.height = 1536;
+        const ctx = c.getContext("2d");
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+        ctx.filter = "contrast(1.12) saturate(1.16) brightness(1.03)";
+        ctx.drawImage(im, 0, 0, 1536, 1536);
+        res(c.toDataURL("image/jpeg", 0.96));
+      } catch (e) { res(srcUrl); }
+    };
+    im.onerror = () => res(srcUrl);
+    im.src = srcUrl;
+  });
+}
+
+async function triggerRealDownload(url, filename) {
+  try {
+    const r = await fetch(url);
+    const b = await r.blob();
+    const blobUrl = URL.createObjectURL(b);
+    const a = document.createElement("a");
+    a.style.display = "none"; a.href = blobUrl; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 2000);
+    addMsg("✅ بدأ حفظ الملف في هاتفك: <b>" + filename + "</b>");
+  } catch (e) {
+    window.open(url, "_blank");
+  }
+}
 
 function addMsg(html, who) {
   const d = document.createElement("div");
@@ -88,7 +122,7 @@ async function makePureAIImage(prompt) {
     const enQ = /سيار|سباق/i.test(prompt) ? "futuristic hypercar neon night, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus" : "epic futuristic cyber city sunset, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus";
     const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
       method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 512, height: 512, steps: 18, n: 1 } })
+      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 512, height: 512, steps: 8, n: 1, sampler_name: 'k_lcm' } })
     });
     const hid = (await hr.json()).id;
     const i0 = "[" + "0" + "]";
@@ -125,7 +159,8 @@ async function makeVideo(src, box) {
   }
   rec.stop(); await new Promise(r => { rec.onstop = r; });
   const v = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
-  box.innerHTML = '<video class="media" src="' + v + '" controls autoplay loop muted playsinline></video><div class="tools"><a class="tbtn" href="' + v + '" download="DH_VIDEO.webm">⬇️ تحميل الفيديو</a></div>';
+  box.innerHTML = '<video class="media" src="' + v + '" controls autoplay loop muted playsinline></video><div class="tools"><button type="button" class="tbtn" id="dlVidBtn">⬇️ حفظ الفيديو HD</button></div>';
+  box.querySelector("#dlVidBtn").onclick = () => triggerRealDownload(v, "DH_CINEMA_VIDEO_" + Date.now() + ".webm");
 }
 
 async function runQuery(txt) {
@@ -137,10 +172,11 @@ async function runQuery(txt) {
   const isI = /صور|صورة|ارسم|صمم|image/i.test(q);
   if (isV || isI) {
     const box = addMsg("🎨 جاري التوليد بالذكاء الاصطناعي الخالص...");
-    const u = await makePureAIImage(q);
+    const rawU = await makePureAIImage(q); const u = await upscaleAndSharpenHD(rawU);
     if (isV) { await makeVideo(u, box); }
     else {
-      box.innerHTML = '<img class="media" src="' + u + '"><div class="tools"><a class="tbtn" href="' + u + '" download="DH_AI.jpg">⬇️ تحميل الصورة</a><button type="button" class="tbtn" id="vNow">🎬 تحويل لفيديو</button></div>';
+      box.innerHTML = '<img class="media" src="' + u + '"><div class="tools"><button type="button" class="tbtn" id="dlImgBtn">⬇️ حفظ الصورة HD</button><button type="button" class="tbtn" id="vNow">🎬 تحويل لفيديو</button></div>';
+      box.querySelector("#dlImgBtn").onclick = () => triggerRealDownload(u, "DH_ULTRA_HD_" + Date.now() + ".jpg");
       box.querySelector("#vNow").onclick = () => makeVideo(u, box);
     }
     return;
