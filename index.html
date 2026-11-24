@@ -12,7 +12,7 @@ footer{padding:8px 9px;flex-wrap:nowrap;background:#0b1222;border-top:1px solid 
 .cbtn{width:37px;height:37px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#38bdf8;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}#sendBtn{background:#2563eb;color:#fff;border:none}
 </style></head><body>
 <header><div class="brand"><span class="dot"></span> DARK HORIZON FILMS ✦</div><div style="display:flex;gap:5px"><button type="button" class="hbtn" id="btnNew">+ جديد</button><button type="button" class="hbtn" id="btnProj">🗂</button></div></header>
-<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(FIXED-STABLE v38.0)</span></div></div>
+<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(FAST-INSTANT v39.0)</span></div></div>
 <div class="qbar"><button type="button" class="qchip" data-p="صمم صورة سيارة مرسيدس خارقة في الغروب 8K">🎨 صورة 8K</button><button type="button" class="qchip" data-p="انتج فيديو سينمائي لمدينة مستقبلية">🎬 فيديو AI</button><button type="button" class="qchip" id="btnRemix">🪄 تعديل صورة</button><button type="button" class="qchip" id="btnLogo">🏷 رفع اللوغو</button></div>
 <footer><button type="button" class="cbtn" id="btnPlus">+</button><button type="button" class="cbtn" id="btnMic">🎙</button><input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود..."><button type="button" class="cbtn" id="sendBtn">➤</button></footer>
 <input type="file" id="fIn" accept="image/*,video/*" hidden><input type="file" id="fLogo" accept="image/*" hidden>
@@ -31,21 +31,20 @@ async function fetchBestImage(p) {
       if (td && td.responseData && td.responseData.translatedText) enPrompt = td.responseData.translatedText;
     } catch (e) {}
   }
-  enPrompt = enPrompt.replace(/design a picture of|create an image of|photo of/gi, "").trim() + ", RAW candid photograph, ARRI Alexa 65, 85mm f/1.4 lens, sharp focus, 8k uhd";
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const ac = new AbortController(); setTimeout(() => ac.abort(), 45000);
-      const r = await fetch(SRV + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: enPrompt }) });
-      if (r.ok) { const b = await r.blob(); if (b.size > 8000) return URL.createObjectURL(b); }
-    } catch (e) {}
-    await new Promise(r => setTimeout(r, 2500));
-  }
+  enPrompt = enPrompt.replace(/design a picture of|create an image of|photo of/gi, "").trim() + ", RAW candid photograph, 85mm f/1.4 lens, sharp focus, 8k uhd";
+
+  try {
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 16000);
+    const r = await fetch(SRV + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: enPrompt }) });
+    if (r.ok) { const b = await r.blob(); if (b.size > 6000) return URL.createObjectURL(b); }
+  } catch (e) {}
+
   const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
     method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-    body: JSON.stringify({ prompt: enPrompt + " ### blurry, cartoon, distorted", models: ["Juggernaut XL", "AlbedoBase XL (SDXL)"], params: { width: 512, height: 512, steps: 18, n: 1 } })
+    body: JSON.stringify({ prompt: enPrompt + " ### blurry, cartoon, distorted", params: { width: 512, height: 512, steps: 14, n: 1 } })
   });
   const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 16; i++) {
     await new Promise(r => setTimeout(r, 1500));
     const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
     const g = st.generations && eval("st.generations" + i0);
