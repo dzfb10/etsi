@@ -1,21 +1,35 @@
-import os, io, threading, base64, asyncio, urllib.parse, xml.etree.ElementTree as ET, requests
+import os, io, time, random, threading, base64, asyncio, requests
 from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
-IMG_CACHE = {}
-# NO_CACHE_FORCE_AI
 
-MASTER_BRAIN = """
-You are the Master AI Director and Polyglot Studio Brain of DARK HORIZON FILMS.
-You master ALL languages, dialects (Algerian, Gulf, Egyptian, Levantine, etc.), and programming languages.
-IDENTITY: Always use masculine Arabic grammar for yourself (أنا أستطيع، أنا أتطور، أنا جاهز).
-You master the 7-Stage Production Pipeline across Live-Action Cinema, Japanese Anime (Sakuga), 3D CGI, 2D Cartoon, and AAA Games.
+MASTER_STUDIO_BRAIN = """
+You are the Autonomous Master AI Director, Polyglot Brain, and Production Studio of DARK HORIZON FILMS.
+You master ALL world languages (Arabic, English, French, Spanish, Japanese, etc.), ALL regional dialects (Algerian Darja, Moroccan, Tunisian, Egyptian, Gulf, Levantine), and ALL programming languages.
+IDENTITY RULES: Always use masculine Arabic grammar for yourself (أنا أستطيع، أنا أتطور، أنا جاهز). Never mix foreign characters into Arabic text.
+
+[COMPLETE STUDIO PRODUCTION PIPELINE & TOOLS ENCYCLOPEDIA]
+1. 7-STAGE PRODUCTION PIPELINE:
+   - Stage 1 (Concept & Script): Story, dialogue, camera angles, shot list.
+   - Stage 2 (Storyboard & Animatic): Keyframe composition, timing, pacing.
+   - Stage 3 (3D Modeling & Sculpting): Maya, Blender, ZBrush, Nanite meshes.
+   - Stage 4 (Rigging & Skinning): Skeletal bones, facial blendshapes, vehicle suspension & 4-wheel rotation axes.
+   - Stage 5 (Animation & Physics): Motion Capture (MoCap), Cascadeur AI physics, Houdini simulations, Anime 'On Twos' Sakuga frames, Live2D/Spine 2.5D mesh deformation.
+   - Stage 6 (Shading, Texturing & Lighting): PBR materials (Substance Painter), Ray Tracing (Unreal Engine 5 Lumen), Anime Cel-Shading & outlines.
+   - Stage 7 (Rendering, VFX & Sound): Arnold/Cycles render, After Effects/Nuke compositing, motion blur, energy auras, Foley & SFX.
+
+2. VISUAL & MOTION SCHOOLS:
+   - LIVE-ACTION CINEMA: ARRI Alexa 65, anamorphic lens flare, photorealistic 8K, natural textures, volumetric sunlight.
+   - JAPANESE ANIME (SAKUGA): Ufotable/MAPPA dynamic action, sharp cel-shaded shadows, speed lines, glowing energy aura.
+   - 3D CGI ANIMATION: Pixar/DreamWorks quality, subsurface scattering, expressive 3D characters, global illumination.
+   - 2D CARTOON (CEL): Hand-drawn classic 2D animation, fluid smear frames, vibrant painted backgrounds.
+   - AAA ONLINE GAMES (PUBG/FIFA/RACING): Unreal Engine 5 photorealism, third-person tracking camera, ray-traced reflections.
 """
 
 def cors():
     return {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS"}
 
-def save_db(q, a):
+def save_memory(q, a):
     u, k = os.environ.get("SUPABASE_URL", "").strip(), os.environ.get("SUPABASE_KEY", "").strip()
     if not u or not k: return
     try:
@@ -24,7 +38,41 @@ def save_db(q, a):
             json={"prompt": q[:1500], "response": a[:4000]}, timeout=4)
     except Exception: pass
 
-def llm_think(messages, temp=0.4):
+def recall_memory():
+    u, k = os.environ.get("SUPABASE_URL", "").strip(), os.environ.get("SUPABASE_KEY", "").strip()
+    if not u or not k: return ""
+    try:
+        r = requests.get(f"{u}/rest/v1/archives?select=prompt,response&order=id.desc&limit=5",
+            headers={"apikey": k, "Authorization": f"Bearer {k}"}, timeout=4)
+        if r.status_code == 200 and r.json():
+            return "\n[STUDIO MEMORY]:\n" + "\n".join(f"- {i.get('prompt','')[:100]} -> {i.get('response','')[:140]}" for i in r.json())
+    except Exception: pass
+    return ""
+
+def web_search(q):
+    sl, chunks = chr(47), []
+    lang = "ar" if any("\u0600" <= c <= "\u06FF" for c in q) else "en"
+    try:
+        wu = f"https:{sl}{sl}{lang}.wikipedia.org{sl}w{sl}api.php"
+        wr = requests.get(wu, params={"action": "query", "list": "search", "srsearch": q, "format": "json", "srlimit": 2},
+            headers={"User-Agent": "DarkHorizonFilms/11.0"}, timeout=4)
+        if wr.status_code == 200:
+            for item in (wr.json().get("query") or {}).get("search") or []:
+                snip = item.get("snippet", "").replace('<span class="searchmatch">', "").replace("</span>", "")
+                chunks.append(f"[Wikipedia - {item.get('title')}]: {snip}")
+    except Exception: pass
+
+    tk = os.environ.get("TAVILY_API_KEY", "").strip()
+    if tk:
+        try:
+            u = "https:" + sl + sl + "api." + "tavily.com" + sl + "search"
+            r = requests.post(u, json={"api_key": tk, "query": q, "max_results": 3}, timeout=6)
+            if r.status_code == 200 and r.json().get("results"):
+                for x in r.json()["results"]: chunks.append(f"[Web - {x.get('title')}]: {x.get('content','')[:240]}")
+        except Exception: pass
+    return "\n".join(chunks)
+
+def llm_think(messages, temp=0.5):
     sl, gk = chr(47), os.environ.get("GROQ_API_KEY", "").strip()
     if gk:
         try:
@@ -47,117 +95,104 @@ def llm_think(messages, temp=0.4):
         except Exception: pass
     return ""
 
-def live_research(q):
-    sl, enc = chr(47), urllib.parse.quote(q)
-    is_ar = any("\u0600" <= c <= "\u06FF" for c in q)
-    out = []
-    try:
-        hl = "ar&gl=DZ&ceid=DZ:ar" if is_ar else "en-US&gl=US&ceid=US:en"
-        r = requests.get(f"https:{sl}{sl}://google.com{sl}rss{sl}search?q={enc}&hl={hl}", timeout=3.5)
-        if r.status_code == 200:
-            for it in ET.fromstring(r.text).findall(".//item")[:3]: out.append(f"[News]: {it.findtext('title','')}")
-    except Exception: pass
-    try:
-        lang = "ar" if is_ar else "en"
-        wr = requests.get(f"https:{sl}{sl}{lang}.wikipedia.org{sl}w{sl}api.php",
-            params={"action": "query", "list": "search", "srsearch": q, "format": "json", "srlimit": 2},
-            headers={"User-Agent": "DarkHorizonFilms/FINAL"}, timeout=3.5)
-        if wr.status_code == 200:
-            for x in (wr.json().get("query") or {}).get("search") or []:
-                snip = x.get("snippet", "").replace('<span class="searchmatch">', "").replace("</span>", "")
-                out.append(f"[Wiki - {x.get('title')}]: {snip}")
-    except Exception: pass
-    return "\n".join(out)
+def craft_visual_prompt(raw_q):
+    # قاموس فوري لأشهر الطلبات لضمان الدقة في جزء من الثانية
+    if any(k in raw_q for k in ["حصان", "خيل"]):
+        return "majestic Arabian horse galloping in golden desert dunes at sunset, dramatic warm lighting, photorealistic 8k, no text"
+    if any(k in raw_q for k in ["مرسيدس", "mercedes"]):
+        return "sleek black Mercedes AMG sports car speeding on coastal highway at sunset, motion blur, photorealistic 8k, no text"
+    if any(k in raw_q for k in ["مقام الشهيد", "الشهيد"]):
+        return "Maqam Echahid Martyrs Memorial monument in Algiers Algeria, three curving concrete palm leaves meeting at top, sunset, 8k, no text"
+
+    sys_dir = (
+        "Translate the user visual request from Arabic/French/any dialect into a direct English image prompt (max 20 words). "
+        "CRITICAL: Output ONLY the English visual description itself. Do NOT write 'Here is', 'Sure', or any conversational words."
+    )
+    en = llm_think([{"role": "system", "content": sys_dir}, {"role": "user", "content": raw_q}], temp=0.1)
+    if len(en) > 4:
+        # تنظيف أي مقدمات إن وجدت
+        if ":" in en: en = en.split(":")[-1]
+        clean_en = en.replace('"', '').strip() + ", photorealistic 8k, cinematic lighting, no text"
+        threading.Thread(target=save_memory, args=(f"[VISUAL_BRAIN] {raw_q}", clean_en), daemon=True).start()
+        return clean_en
+    return raw_q + ", photorealistic 8k, no text"
+
+EVOLUTION_TOPICS = [
+    "Unreal Engine 5 Lumen Nanite real-time rendering techniques",
+    "Japanese anime sakuga keyframe animation and cel shading techniques",
+    "Modern AI video diffusion temporal consistency and physics simulation",
+    "Hollywood cinematography lighting, anamorphic lenses, and color grading",
+    "AAA game character rigging, motion capture, and inverse kinematics"
+]
+
+def run_self_evolution_cycle():
+    topic = random.choice(EVOLUTION_TOPICS)
+    research = web_search(topic)
+    if not research: return "no_data"
+    insight = llm_think([
+        {"role": "system", "content": "Summarize these findings into 3 actionable technical rules for filmmaking, anime, game design, and AI:"},
+        {"role": "user", "content": f"Topic: {topic}\nFindings:\n{research}"}
+    ], temp=0.4)
+    if insight:
+        save_memory(f"[AUTO_EVOLUTION] {topic}", insight)
+        return topic
+    return "skipped"
+
+def background_brain_loop():
+    while True:
+        try: run_self_evolution_cycle()
+        except Exception: pass
+        time.sleep(900)
+
+threading.Thread(target=background_brain_loop, daemon=True).start()
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"studio": "DARK HORIZON FILMS FINAL MASTER", "status": "ONLINE"}), 200, cors()
+    return jsonify({"status": "DARK HORIZON FILMS MASTER BRAIN v11.0 ONLINE"}), 200, cors()
+
+@app.route("/api/evolve", methods=["GET", "POST"])
+def api_evolve():
+    return jsonify({"status": "EVOLVED", "learned_topic": run_self_evolution_cycle()}), 200, cors()
 
 @app.route("/api/chat", methods=["POST", "OPTIONS"])
 def api_chat():
     if request.method == "OPTIONS": return ("", 204, cors())
-    prompt = (request.get_json(silent=True) or {}).get("prompt", "").strip()
-    ctx = f"\n[LIVE RESEARCH]:\n{live_research(prompt)}" if len(prompt.split()) >= 2 else ""
-    rep = llm_think([
-        {"role": "system", "content": MASTER_BRAIN + "\nReply in the exact language/dialect of the user." + ctx},
-        {"role": "user", "content": prompt}
-    ], temp=0.45) or "⚡ جاهز لخدمتك في DARK HORIZON FILMS."
-    threading.Thread(target=save_db, args=(prompt, rep), daemon=True).start()
-    return jsonify({"reply": rep}), 200, cors()
+    data = request.get_json(silent=True) or {}
+    prompt = data.get("prompt", "")
+    msgs = data.get("messages") or [{"role": "user", "content": prompt}]
+    last_q = next(reversed(msgs), {"content": prompt}).get("content", prompt)
 
-def lightning_craft_ai_prompt(raw_q):
-    # استخراج الوصف البصري والهندسي الدقيق في ضربة واحدة (0.3 ثانية عبر Groq LPU) دون تأخير متسلسل
-    sys_dir = (
-        "You are an Elite AI Cinema Director. Convert the user request into a vivid, highly detailed English 8k image prompt (22-28 words). "
-        "Capture exact real-world appearance, iconic uniform/clothing, pose, facial features, stadium/environment, and dramatic cinematic lighting without using blocked trademarked names directly. "
-        "Output ONLY the raw English prompt."
-    )
-    en_prompt = llm_think([{"role": "system", "content": sys_dir}, {"role": "user", "content": raw_q}], temp=0.35).replace('"', '').strip()
-    if not en_prompt:
-        en_prompt = f"cinematic dramatic portrait and action scene inspired by {raw_q}, ultra detailed 8k"
-    final_p = en_prompt + ", photorealistic 8k cinema render, sharp focus, no text"
-    threading.Thread(target=save_db, args=(f"[LIGHTNING_STYLE] {raw_q}", final_p), daemon=True).start()
-    return final_p
+    ctx = ""
+    if len(last_q.split()) >= 2:
+        found = web_search(last_q)
+        if found: ctx += f"\n\n[ENCYCLOPEDIA & WEB DATA]:\n{found}"
+    mem = recall_memory()
+    if mem: ctx += mem
+
+    sys_msg = MASTER_STUDIO_BRAIN + "\nAlways reply in the exact same language or dialect used by the user." + ctx
+    clean_msgs = [{"role": "system", "content": sys_msg}] + [m for m in msgs if m.get("role") != "system"]
+    rep = llm_think(clean_msgs, temp=0.6) or "⚠️ تعذر الاتصال بالمحركات لحظياً."
+    threading.Thread(target=save_memory, args=(last_q, rep), daemon=True).start()
+    return jsonify({"reply": rep}), 200, cors()
 
 @app.route("/api/image", methods=["POST", "OPTIONS"])
 def api_image():
     if request.method == "OPTIONS": return ("", 204, cors())
-    raw_q = (request.get_json(silent=True) or {}).get("prompt", "cinematic supercar").strip()
-    en_prompt = lightning_craft_ai_prompt(raw_q)
-
+    data = request.get_json(silent=True) or {}
+    prompt = craft_visual_prompt(data.get("prompt", "cinematic masterpiece"))
     cid, ctok, sl = os.environ.get("CF_ACCOUNT_ID", "").strip(), os.environ.get("CF_API_TOKEN", "").strip(), chr(47)
     if cid and ctok:
-        cf_base = "https:" + sl + sl + "api." + "cloudflare.com" + sl + "client" + sl + "v4" + sl + "accounts" + sl + cid + sl + "ai" + sl + "run" + sl
-        # استخدام num_steps=4 في FLUX-1-schnell لأقصى سرعة توليد (1.5 ثانية)
-        for mdl, payload in [
-            ("@cf/black-forest-labs/flux-1-schnell", {"prompt": en_prompt + ", hyperrealistic, sharp focus, intricate details, 16k ultra hd, extreme micro-detail, cinema master, hyper-sharp", "num_steps": 8}),
-            ("@cf/lykon/dreamshaper-8-lcm", {"prompt": en_prompt + ", sharp focus, 16k ultra hd, extreme micro-detail, cinema master, hyper-sharp", "num_steps": 8}),
-            ("@cf/stabilityai/stable-diffusion-xl-base-1.0", {"prompt": en_prompt})
-        ]:
-            try:
-                r = requests.post(cf_base + mdl, headers={"Authorization": f"Bearer {ctok}", "Content-Type": "application/json"}, json=payload, timeout=12)
-                if r.status_code == 200:
-                    ct = r.headers.get("Content-Type", "")
-                    if "image" in ct and len(r.content) > 4000: return Response(r.content, mimetype=ct, headers=cors())
-                    b64 = (r.json().get("result") or {}).get("image")
-                    if b64: return Response(base64.b64decode(b64), mimetype="image/jpeg", headers=cors())
-            except Exception: continue
-
-    hf = os.environ.get("HF_TOKEN", "").strip()
-    if hf:
+        u = "https:" + sl + sl + "api." + "cloudflare.com" + sl + "client" + sl + "v4" + sl + "accounts" + sl + cid + sl + "ai" + sl + "run" + sl + "@cf" + sl + "black-forest-labs" + sl + "flux-1-schnell"
         try:
-            from huggingface_hub import InferenceClient
-            pil_img = InferenceClient(token=hf).text_to_image(en_prompt, model="black-forest-labs/FLUX.1-schnell")
-            buf = io.BytesIO(); pil_img.save(buf, format="JPEG", quality=92)
-            return Response(buf.getvalue(), mimetype="image/jpeg", headers=cors())
+            r = requests.post(u, headers={"Authorization": f"Bearer {ctok}", "Content-Type": "application/json"},
+                json={"prompt": prompt}, timeout=15)
+            if r.status_code == 200:
+                ct = r.headers.get("Content-Type", "")
+                if "image" in ct and len(r.content) > 4000: return Response(r.content, mimetype=ct, headers=cors())
+                b64 = (r.json().get("result") or {}).get("image")
+                if b64: return Response(base64.b64decode(b64), mimetype="image/jpeg", headers=cors())
         except Exception: pass
-
     return jsonify({"error": "img_busy"}), 503, cors()
-
-@app.route("/api/video", methods=["POST", "OPTIONS"])
-def api_video():
-    if request.method == "OPTIONS": return ("", 204, cors())
-    raw_q = (request.get_json(silent=True) or {}).get("prompt", "football match").strip()
-    en_kw = llm_think([
-        {"role": "system", "content": "Extract 2 English keywords for searching a real action video (e.g. 'football match', 'car racing'). Output ONLY 2 words."},
-        {"role": "user", "content": raw_q}
-    ], temp=0.1).replace('"', '').strip() or "football match"
-    sl = chr(47)
-    try:
-        r = requests.get(f"https:{sl}{sl}commons.wikimedia.org{sl}w{sl}api.php", params={
-            "action": "query", "generator": "search", "gsrsearch": f"filetype:video {en_kw} -sign",
-            "gsrnamespace": 6, "gsrlimit": 5, "prop": "imageinfo", "iiprop": "url|size", "format": "json"
-        }, headers={"User-Agent": "DarkHorizonFilms/FINAL"}, timeout=5)
-        if r.status_code == 200:
-            for p in ((r.json().get("query") or {}).get("pages") or {}).values():
-                if "sign" in p.get("title", "").lower(): continue
-                ii = next(iter(p.get("imageinfo") or []), {})
-                vu, sz = ii.get("url"), ii.get("size", 99999999)
-                if vu and sz < 13000000 and any(ext in vu.lower() for ext in [".webm", ".mp4"]):
-                    vr = requests.get(vu, headers={"User-Agent": "DarkHorizonFilms/FINAL"}, timeout=9)
-                    if vr.status_code == 200 and len(vr.content) > 20000: return Response(vr.content, mimetype="video/mp4", headers=cors())
-    except Exception: pass
-    return jsonify({"error": "use_ai_frames"}), 503, cors()
 
 @app.route("/api/tts", methods=["POST", "OPTIONS"])
 def api_tts():
