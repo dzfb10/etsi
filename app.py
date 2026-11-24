@@ -5,12 +5,12 @@ app = Flask(__name__)
 HF_TOKEN = os.environ.get("HF_TOKEN", "").strip()
 SL = chr(47)
 HF_CHAT = f"https:{SL}{SL}router.huggingface.co{SL}v1{SL}chat{SL}completions"
-HF_FLUX = f"https:{SL}{SL}router.huggingface.co{SL}hf-inference{SL}models{SL}black-forest-labs{SL}FLUX.1-schnell"
 
 SCENES = [
     "black Mercedes AMG GT sports car speeding on coastal highway at golden sunset, dramatic orange sky, motion blur, 8k automotive photography",
     "majestic Arabian stallion running in golden desert dunes at sunset, dramatic rim lighting, shallow depth of field, 85mm f/1.4 lens, 8k photorealistic",
-    "futuristic hypercars racing on neon red lit highway at night, glossy wet asphalt reflections, dynamic motion blur, 8k cinema shot"
+    "futuristic hypercars racing on neon red lit highway at night, glossy wet asphalt reflections, dynamic motion blur, 8k cinema shot",
+    "cinematic portrait of a warrior knight in golden armor at sunset, dramatic lighting, sharp focus, 8k raw photo"
 ]
 
 def cors():
@@ -18,7 +18,7 @@ def cors():
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"status": "ONLINE", "version": "MASTER-v18.0", "token": bool(HF_TOKEN)}), 200, cors()
+    return jsonify({"status": "ONLINE", "version": "FINAL-v19.0", "token": bool(HF_TOKEN)}), 200, cors()
 
 def smart_prompt(q):
     clean = q.replace("صمم", "").replace("صورة", "").replace("صور", "").replace("ارسم", "").strip()
@@ -29,7 +29,7 @@ def smart_prompt(q):
             json={"model": "Qwen/Qwen2.5-72B-Instruct", "messages": [
                 {"role": "system", "content": "Understand any language or dialect (including Algerian Darja) and convert the request into an ultra-photorealistic 8K English photography prompt with dramatic lighting and sharp focus. Output ONLY the English prompt."},
                 {"role": "user", "content": clean}
-            ], "max_tokens": 100}, timeout=10)
+            ], "max_tokens": 100}, timeout=8)
         if r.status_code == 200:
             i0 = int("0")
             t = r.json()["choices"][i0]["message"]["content"].strip()
@@ -42,22 +42,15 @@ def api_image():
     if request.method == "OPTIONS": return ("", 204, cors())
     q = (request.get_json(silent=True) or {}).get("prompt", "").strip()
     en_p = smart_prompt(q)
-    models = [
-        "black-forest-labs/FLUX.1-schnell",
-        "ByteDance/SDXL-Lightning",
-        "stabilityai/stable-diffusion-xl-base-1.0"
-    ]
-    for m in models:
+    for m in ["black-forest-labs/FLUX.1-schnell", "stabilityai/stable-diffusion-xl-base-1.0"]:
         try:
-            url = "https://huggingface.co" + m
+            url = f"https:{SL}{SL}router.huggingface.co{SL}hf-inference{SL}models{SL}{m}"
             r = requests.post(url, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"},
-                json={"inputs": en_p}, timeout=16)
+                json={"inputs": en_p}, timeout=25)
             if r.status_code == 200 and len(r.content) > 6000:
                 return Response(r.content, mimetype="image/png", headers=cors())
         except Exception: continue
     return jsonify({"error": "busy"}), 503, cors()
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500, cors()
 
 @app.route("/api/chat", methods=["POST", "OPTIONS"])
 def api_chat():
