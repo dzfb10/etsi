@@ -12,13 +12,13 @@ footer{padding:8px 9px;flex-wrap:nowrap;background:#0b1222;border-top:1px solid 
 .cbtn{width:37px;height:37px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#38bdf8;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}#sendBtn{background:#2563eb;color:#fff;border:none}
 </style></head><body>
 <header><div class="brand"><span class="dot"></span> DARK HORIZON FILMS ✦</div><div style="display:flex;gap:5px"><button type="button" class="hbtn" id="btnNew">+ جديد</button><button type="button" class="hbtn" id="btnProj">🗂</button></div></header>
-<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(STABLE-LIGHT v35.0)</span></div></div>
+<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(TRI-CORE-AI v37.0)</span></div></div>
 <div class="qbar"><button type="button" class="qchip" data-p="صمم صورة سيارة مرسيدس خارقة في الغروب 8K">🎨 صورة 8K</button><button type="button" class="qchip" data-p="انتج فيديو سينمائي لمدينة مستقبلية">🎬 فيديو AI</button><button type="button" class="qchip" id="btnRemix">🪄 تعديل صورة</button><button type="button" class="qchip" id="btnLogo">🏷 رفع اللوغو</button></div>
 <footer><button type="button" class="cbtn" id="btnPlus">+</button><button type="button" class="cbtn" id="btnMic">🎙</button><input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود..."><button type="button" class="cbtn" id="sendBtn">➤</button></footer>
 <input type="file" id="fIn" accept="image/*,video/*" hidden><input type="file" id="fLogo" accept="image/*" hidden>
 <script>
 const SRV = "https://dark-horizon-ai" + ".onrender.com", chat = document.getElementById("chat"), inp = document.getElementById("inp");
-let logoImg = null, upMode = "anim"; fetch(SRV + "/").catch(() => {});
+let logoImg = null, upMode = "anim", chatMem = []; fetch(SRV + "/").catch(() => {});
 function addMsg(h, w) { const d = document.createElement("div"); d.className = "msg " + (w || "bot"); d.innerHTML = h; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d; }
 function dlFile(u, n) { const a = document.createElement("a"); a.href = u; a.download = n; a.target = "_blank"; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1500); }
 async function fetchBestImage(p) {
@@ -102,12 +102,12 @@ async function run(t) {
     return;
   }
   const box = addMsg("⚡ جاري التفكير...");
-  try { const r = await fetch(SRV + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q }) }); box.innerHTML = ((await r.json()).reply || "").replace(/\n/g, "<br>"); } catch (e) { box.innerHTML = "⚡ الخادم يستيقظ، أعد المحاولة."; }
+  try { const r = await fetch(SRV + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q, history: chatMem.slice(-6) }) }); const rep = ((await r.json()).reply || ""); chatMem.push({role:"user",content:q},{role:"assistant",content:rep}); box.innerHTML = rep.replace(/```([\s\(\S\)]*?)```/g, '<pre dir="ltr" style="background:#020617;padding:10px;border-radius:10px;overflow-x:auto;color:#38bdf8;margin:6px 0"><code>$1</code></pre>').replace(/\n/g, "<br>"); } catch (e) { box.innerHTML = "⚡ الخادم يستيقظ، أعد المحاولة."; }
 }
 document.getElementById("sendBtn").onclick = () => run(inp.value);
 inp.onkeydown = e => { if (e.key === "Enter") run(inp.value); };
 document.querySelectorAll(".qchip[data-p]").forEach(b => { b.onclick = () => run(b.getAttribute("data-p")); });
-document.getElementById("btnNew").onclick = () => { chat.innerHTML = "<div class=\"msg bot\">✨ جلسة جديدة جاهزة!</div>"; };
+document.getElementById("btnNew").onclick = () => { chatMem = []; chat.innerHTML = "<div class=\"msg bot\">✨ جلسة جديدة جاهزة!</div>"; };
 document.getElementById("btnProj").onclick = () => { const m = JSON.parse(localStorage.getItem("dh_hist") || "[]"); addMsg(m.length ? "🗂 <b>المشاريع المحفوظة:</b><br>• " + m.slice(0, 6).join("<br>• ") : "🗂 لا توجد مشاريع بعد."); };
 const fIn = document.getElementById("fIn"), fLogo = document.getElementById("fLogo");
 document.getElementById("btnPlus").onclick = () => { upMode = "anim"; fIn.click(); };
