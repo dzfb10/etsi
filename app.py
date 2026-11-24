@@ -13,7 +13,7 @@ def cors():
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"status": "ONLINE", "version": "ALL-9-PARALLEL-SWARM-v21", "token": bool(HF_TOKEN)}), 200, cors()
+    return jsonify({"status": "ONLINE", "version": "ALL-10-WITH-CLOUDFLARE-v22", "token": bool(HF_TOKEN)}), 200, cors()
 
 def smart_prompt(q):
     clean = q.replace("صمم", "").replace("صورة", "").replace("صور", "").replace("ارسم", "").strip()
@@ -28,6 +28,20 @@ def smart_prompt(q):
     except Exception: pass
     return f"cinematic ultra-photorealistic shot of {clean}, golden hour lighting, sharp focus, 8k"
 
+
+CF_ACC = os.environ.get("CF_ACCOUNT_ID", "").strip()
+CF_TOK = os.environ.get("CF_API_TOKEN", "").strip()
+
+def call_cloudflare_flux(en_p):
+    if not (CF_ACC and CF_TOK): return None
+    url = f"https://cloudflare.com{CF_ACC}/ai/run/@cf/black-forest-labs/flux-1-schnell"
+    r = requests.post(url, headers={"Authorization": "Bearer " + CF_TOK, "Content-Type": "application/json"}, json={"prompt": en_p}, timeout=20)
+    if r.status_code == 200:
+        import base64
+        b64 = r.json().get("result", {}).get("image")
+        if b64: return base64.b64decode(b64)
+    return None
+
 def call_hf_model(mdl, en_p):
     url = f"https:{SL}{SL}router.huggingface.co{SL}hf-inference{SL}models{SL}{mdl}"
     r = requests.post(url, headers={"Authorization": "Bearer " + HF_TOKEN, "Content-Type": "application/json"}, json={"inputs": en_p}, timeout=24)
@@ -41,7 +55,7 @@ def api_image():
     en_p = smart_prompt((request.get_json(silent=True) or {}).get("prompt", ""))
     models = ["black-forest-labs/FLUX.1-schnell", "black-forest-labs/FLUX.1-dev", "ByteDance/SDXL-Lightning", "stabilityai/stable-diffusion-xl-base-1.0"]
     with ThreadPoolExecutor(max_workers=4) as ex:
-        futs = [ex.submit(call_hf_model, m, en_p) for m in models]
+        futs = [ex.submit(call_hf_model, m, en_p) for m in models] + [ex.submit(call_cloudflare_flux, en_p)]
         for fut in as_completed(futs):
             img_bytes = fut.result()
             if img_bytes:
