@@ -40,7 +40,7 @@ footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);borde
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(FLUX.1-SCHNELL 8K PRO v9.0)</b></div>
+  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(FLUX.1-1024 PHOTOREAL v11.0)</b></div>
 </div>
 <div class="chips">
   <button type="button" class="chip" data-p="صمم صورة سيارة رياضية مستقبلية في الغروب 8K">🎨 تصميم صورة AI</button>
@@ -74,7 +74,7 @@ async function upscaleAndSharpenHD(srcUrl) {
         ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
         ctx.filter = "contrast(1.12) saturate(1.16) brightness(1.03)";
         ctx.drawImage(im, 0, 0, 1536, 1536);
-        res(c.toDataURL("image/jpeg", 0.96));
+        res(c.toDataURL("image/png"));
       } catch (e) { res(srcUrl); }
     };
     im.onerror = () => res(srcUrl);
@@ -109,7 +109,7 @@ function addMsg(html, who) {
 async function makePureAIImage(prompt) {
   const s = String.fromCharCode(47);
   const fromRender = async () => {
-    const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
+    const ac = new AbortController(); setTimeout(() => ac.abort(), 38000);
     const r = await fetch(API + "/api/image", {
       method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json" },
@@ -140,7 +140,7 @@ async function makePureAIImage(prompt) {
     throw new Error("timeout");
   };
 
-  return await Promise.any([fromRender(), fromHorde()]);
+  try { return await fromRender(); } catch (e) { return await fromHorde(); }
 }
 
 async function makeVideo(src, box) {
