@@ -50,7 +50,7 @@ footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:
     <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
     <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
   </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853)</span></div></div>
+  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853-FLUX)</span></div></div>
   <div id="menu">
     <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
     <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
@@ -91,7 +91,7 @@ inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp
 document.getElementById("plus").onclick = () => menu.classList.toggle("show");
 document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
 document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853)</span></div>'; };
+document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD v2853-FLUX)</span></div>'; };
 document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
 document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
 document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
@@ -692,6 +692,29 @@ window.addEventListener("DOMContentLoaded", function() {
   document.addEventListener("click", e => { if (!e.target.closest("#plusBtn") && !e.target.closest("#plusMenu")) document.getElementById("plusMenu").style.display = "none"; });
 });
 
+</script>
+
+<script>
+const _origGenerateSuperImage = window.generateSuperImage;
+window.generateSuperImage = async function(rawPrompt) {
+  const api = "https://onrender.com";
+  for (let t = 1; t <= 3; t++) {
+    try {
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
+      const r = await fetch(api, {
+        method: "POST", signal: ac.signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: rawPrompt || "majestic Arabian stallion running in golden desert dunes at sunset, 8k" })
+      });
+      if (r.ok) {
+        const b = await r.blob();
+        if (b.size > 6000) return { url: URL.createObjectURL(b), engine: "FLUX.1-1024" };
+      }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 3500));
+  }
+  return _origGenerateSuperImage ? await _origGenerateSuperImage(rawPrompt) : null;
+};
 </script>
 </body>
 </html>
