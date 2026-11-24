@@ -8,11 +8,11 @@ header{padding:10px 14px;background:#0b1222;border-bottom:1px solid #1e293b;disp
 .user{align-self:flex-start;background:#2563eb;color:#fff}.bot{align-self:flex-end;background:#111a2e;border:1px solid #1e293b}.pic{width:100%;max-width:330px;border-radius:11px;display:block}
 .bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.abtn{background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer}
 .qbar{display:flex;gap:6px;overflow-x:auto;padding:7px 10px;background:#080e1c;border-top:1px solid #1e293b}.qchip{white-space:nowrap;background:#111c33;color:#cbd5e1;border:1px solid #233354;padding:6px 11px;border-radius:16px;font-size:11px;cursor:pointer}}
-footer{padding:8px 9px;background:#0b1222;border-top:1px solid #1e293b;display:flex;gap:6px;align-items:center}#inp{flex:1;min-width:0;background:#111a2e;border:1px solid #334155;color:#fff;padding:10px 13px;border-radius:20px;font-size:14px;outline:none}
+footer{padding:8px 9px;flex-wrap:nowrap;background:#0b1222;border-top:1px solid #1e293b;display:flex;gap:6px;align-items:center}#inp{flex:1;min-width:0;background:#111a2e;border:1px solid #334155;color:#fff;padding:10px 13px;border-radius:20px;font-size:14px;outline:none}
 .cbtn{width:37px;height:37px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#38bdf8;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}#sendBtn{background:#2563eb;color:#fff;border:none}
 </style></head><body>
 <header><div class="brand"><span class="dot"></span> DARK HORIZON FILMS ✦</div><div style="display:flex;gap:5px"><button type="button" class="hbtn" id="btnNew">+ جديد</button><button type="button" class="hbtn" id="btnProj">🗂</button></div></header>
-<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(ULTIMATE v24.0)</span></div></div>
+<div id="chat"><div class="msg bot">🚀 <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(OMNI-BRAIN WORLD-ARCHIVE v29.0)</span></div></div>
 <div class="qbar"><button type="button" class="qchip" data-p="صمم صورة سيارة مرسيدس خارقة في الغروب 8K">🎨 صورة 8K</button><button type="button" class="qchip" data-p="انتج فيديو سينمائي لمدينة مستقبلية">🎬 فيديو AI</button><button type="button" class="qchip" id="btnRemix">🪄 تعديل صورة</button><button type="button" class="qchip" id="btnLogo">🏷 رفع اللوغو</button></div>
 <footer><button type="button" class="cbtn" id="btnPlus">+</button><button type="button" class="cbtn" id="btnMic">🎙</button><input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود..."><button type="button" class="cbtn" id="sendBtn">➤</button></footer>
 <input type="file" id="fIn" accept="image/*,video/*" hidden><input type="file" id="fLogo" accept="image/*" hidden>
@@ -23,15 +23,25 @@ function addMsg(h, w) { const d = document.createElement("div"); d.className = "
 function dlFile(u, n) { const a = document.createElement("a"); a.href = u; a.download = n; a.target = "_blank"; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1500); }
 async function fetchBestImage(p) {
   const s = String.fromCharCode(47);
+  let enPrompt = p;
+  if (!/[a-zA-Z]{4,}/.test(p)) {
+    try {
+      const tr = await fetch("https:" + s + s + "api.mymemory.translated.net" + s + "get?q=" + encodeURIComponent(p) + "&langpair=ar|en");
+      const td = await tr.json();
+      if (td && td.responseData && td.responseData.translatedText) enPrompt = td.responseData.translatedText;
+    } catch (e) {}
+  }
+  enPrompt = enPrompt.replace(/design a picture of|create an image of|photo of/gi, "").trim() + ", hyper-realistic 8k cinema photography, sharp focus, dramatic lighting";
+
   const raceRender = async () => {
     const ac = new AbortController(); setTimeout(() => ac.abort(), 30000);
-    const r = await fetch(SRV + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: p }) });
+    const r = await fetch(SRV + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: enPrompt }) });
     if (!r.ok) throw new Error("render"); const b = await r.blob(); if (b.size < 6000) throw new Error("small"); return URL.createObjectURL(b);
   };
   const raceHorde = async () => {
     const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
       method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: p + ", 8k photorealistic ### blurry, cartoon", models: ["Juggernaut XL", "AlbedoBase XL (SDXL)", "DreamShaper XL", "EpicRealism"], params: { width: 512, height: 512, steps: 18, n: 1 } })
+      body: JSON.stringify({ prompt: enPrompt + " ### blurry, cartoon", models: ["Juggernaut XL", "AlbedoBase XL (SDXL)", "DreamShaper XL", "EpicRealism"], params: { width: 512, height: 512, steps: 18, n: 1 } })
     });
     if (!hr.ok) throw new Error("horde"); const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
     for (let i = 0; i < 20; i++) {
