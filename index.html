@@ -1,655 +1,167 @@
 <!DOCTYPE html>
-<html data-version="1795506393" lang="ar" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>DARK HORIZON FILMS</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>DARK HORIZON FILMS · MASTER v18</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif}
-body{background:#050811;color:#f1f5f9;height:100dvh;display:flex;overflow:hidden}
-#side{position:fixed;inset:0 auto 0 0;width:265px;background:#0a0f1d;border-right:1px solid #1e293b;z-index:90;transform:translateX(-100%);transition:.25s;display:flex;flex-direction:column;padding:14px}
-#side.open{transform:translateX(0)}
-.s-title{font-weight:800;color:#38bdf8;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-#histList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.h-item{background:#111827;border:1px solid #1e293b;padding:10px;border-radius:10px;font-size:13px;color:#cbd5e1;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#main{flex:1;display:flex;flex-direction:column;width:100%;height:100%;min-width:0}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0a0f1d;border-bottom:1px solid #1e293b}
-.h-grp{display:flex;gap:6px;align-items:center}
-.brand{font-weight:900;font-size:14px;letter-spacing:.8px;background:linear-gradient(90deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
-.btn-top{background:#1e293b;color:#38bdf8;border:1px solid #334155;padding:6px 10px;border-radius:10px;font-size:12px;cursor:pointer}
-#chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
-.msg{max-width:88%;padding:12px 15px;border-radius:18px;line-height:1.65;font-size:15px;word-wrap:break-word}
-.user{align-self:flex-start;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-bottom-right-radius:4px}
-.bot{align-self:flex-end;background:#0f172a;border:1px solid #1e293b;color:#e2e8f0;border-bottom-left-radius:4px;width:100%;max-width:95%}
-.bot img,.bot video{width:100%;max-width:440px;border-radius:12px;margin-top:8px;display:block;background:#020617}
-.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.act-btn{background:#1e293b;color:#93c5fd;border:1px solid #334155;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer;text-decoration:none}
-#menu{display:none;position:fixed;bottom:68px;right:12px;background:#0f172a;border:1px solid #334155;border-radius:14px;padding:8px;flex-direction:column;gap:6px;z-index:80;min-width:225px;box-shadow:0 10px 30px rgba(0,0,0,.75)}
-#menu.show{display:flex}
-.m-item{background:transparent;color:#e2e8f0;border:none;padding:10px 12px;text-align:right;border-radius:8px;font-size:14px;cursor:pointer}
-footer{padding:8px 10px;background:#090d19;border-top:1px solid #1e293b;display:flex;align-items:center;gap:6px;width:100%}
-.icon-btn{width:36px;height:36px;border-radius:50%;background:#1e293b;color:#38bdf8;border:1px solid #334155;font-size:17px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-#inp{flex:1;min-width:0;width:100%;background:#111827;border:1px solid #334155;color:#fff;padding:10px 13px;border-radius:20px;font-size:14px;outline:none;resize:none;max-height:90px;line-height:1.4}
-#send{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;border:none;font-size:17px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:120;align-items:center;justify-content:center;padding:16px}
-#lightbox img{max-width:100%;max-height:92vh;border-radius:12px}
+body{background:#060b16;color:#f1f5f9;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:12px 16px;background:#0b1222;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:900;font-size:15px;color:#38bdf8;display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
+.hbtn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:6px 12px;border-radius:10px;font-size:12px;cursor:pointer}
+#chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:14px;line-height:1.6;word-wrap:break-word}
+.user{align-self:flex-start;background:#2563eb;color:#fff;border-bottom-right-radius:4px}
+.bot{align-self:flex-end;background:#111a2e;border:1px solid #1e293b;color:#e2e8f0;border-bottom-left-radius:4px}
+.pic{width:100%;max-width:340px;border-radius:12px;display:block;border:1px solid #334155}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.abtn{background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:7px 12px;border-radius:9px;font-size:12px;cursor:pointer}
+footer{padding:9px 10px;background:#0b1222;border-top:1px solid #1e293b;display:flex;gap:7px;align-items:center}
+#inp{flex:1;min-width:0;background:#111a2e;border:1px solid #334155;color:#fff;padding:11px 14px;border-radius:22px;font-size:14px;outline:none}
+.cbtn{width:39px;height:39px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#38bdf8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#sendBtn{background:#2563eb;color:#fff;border:none}
 </style>
 </head>
 <body>
-<div id="lightbox" onclick="this.style.display='none'"><img id="lbImg" src=""></div>
-<aside id="side">
-  <div class="s-title"><span>🗂️ مشاريع الاستوديو</span><button type="button" class="btn-top" id="closeSide">✕</button></div>
-  <div id="histList"></div>
-</aside>
-<div id="main">
-  <header>
-    <div class="h-grp"><button type="button" class="btn-top" id="newBtn">+ جديد</button><button type="button" class="btn-top" id="histBtn">🗂️</button></div>
-    <div class="brand">✦ DARK HORIZON FILMS <span class="dot"></span></div>
-  </header>
-  <div id="chat"><div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-LIVE-100-PERCENT-v17)</span></div></div>
-  <div id="menu">
-    <button type="button" class="m-item" id="optImg">🎨 تصميم صورة 8K</button>
-    <button type="button" class="m-item" id="optVid">🎬 إنتاج فيديو بالذكاء الاصطناعي</button>
-    <button type="button" class="m-item" id="optVidFile">🎞️ تحويل فيديو حقيقي من هاتفي</button>
-    <button type="button" class="m-item" id="optUp">🖼️ تحريك صورة من هاتفي</button>
-    <button type="button" class="m-item" id="optLogo">🏷️ رفع اللوغو الخاص بي</button>
+<header>
+  <div class="brand"><span class="dot"></span> DARK HORIZON FILMS ✦</div>
+  <div style="display:flex;gap:6px">
+    <button type="button" class="hbtn" id="btnNew">+ جديد</button>
+    <button type="button" class="hbtn" id="btnProj">🗂</button>
   </div>
-  <input type="file" id="logoFile" accept="image/*" hidden>
-  <input type="file" id="upFile" accept="image/*" hidden>
-  <input type="file" id="vidFile" accept="video/*" hidden>
-  <footer>
-    <button type="button" class="icon-btn" id="plus">+</button>
-    <button type="button" class="icon-btn" id="micBtn">🎙️</button>
-    <textarea id="inp" rows="1" placeholder="اكتب فكرتك، صورة، فيديو، أو كود..."></textarea>
-    <button type="button" id="send">➤</button>
-  </footer>
+</header>
+<div id="chat">
+  <div class="msg bot">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(MASTER v18.0 · FLUX.1 1024px)</span></div>
 </div>
+<footer>
+  <button type="button" class="cbtn" id="btnPlus">+</button>
+  <button type="button" class="cbtn" id="btnMic">🎙</button>
+  <input id="inp" type="text" placeholder="اكتب فكرتك، صورة، فيديو، أو كود...">
+  <button type="button" class="cbtn" id="sendBtn">➤</button>
+</footer>
+<input type="file" id="fIn" accept="image/*,video/*" hidden>
 <script>
-const s = String.fromCharCode(47);
-const API = "https://dark-horizon-ai.onrender.com";
-fetch(API + "/").catch(() => {});
+const SRV = "https://dark-horizon-ai" + ".onrender.com";
+const chat = document.getElementById("chat"), inp = document.getElementById("inp");
 
-const chat = document.getElementById("chat"), inp = document.getElementById("inp"), menu = document.getElementById("menu"), side = document.getElementById("side");
-let sessions = JSON.parse(localStorage.getItem("dh_sessions") || "[]");
-
-function saveSession(t, html) {
-  if (!t) return;
-  sessions.unshift({ title: t.slice(0, 36), html }); sessions = sessions.slice(0, 15);
-  localStorage.setItem("dh_sessions", JSON.stringify(sessions)); renderHist();
-}
-function renderHist() {
-  document.getElementById("histList").innerHTML = sessions.map((x, i) => `<div class="h-item" data-i="${i}">🎬 ${x.title}</div>`).join("");
-  document.querySelectorAll(".h-item").forEach(el => el.onclick = () => { chat.innerHTML = sessions[el.dataset.i].html; side.classList.remove("open"); });
-}
-renderHist();
-
-inp.oninput = () => { inp.style.height = "auto"; inp.style.height = Math.min(inp.scrollHeight, 90) + "px"; };
-document.getElementById("plus").onclick = () => menu.classList.toggle("show");
-document.getElementById("histBtn").onclick = () => side.classList.toggle("open");
-document.getElementById("closeSide").onclick = () => side.classList.remove("open");
-document.getElementById("newBtn").onclick = () => { chat.innerHTML = '<div class="msg bot" dir="ltr" style="text-align:left">Welcome to <b>DARK HORIZON FILMS</b> <span style="font-size:11px;color:#38bdf8">(16K · 120FPS CLOUD PURE-FLUX-LIVE-100-PERCENT-v17)</span></div>'; };
-document.getElementById("optImg").onclick = () => { menu.classList.remove("show"); inp.value = "صمم صورة "; inp.focus(); };
-document.getElementById("optVid").onclick = () => { menu.classList.remove("show"); inp.value = "صمم فيديو "; inp.focus(); };
-document.getElementById("optLogo").onclick = () => { menu.classList.remove("show"); document.getElementById("logoFile").click(); };
-document.getElementById("optUp").onclick = () => { menu.classList.remove("show"); document.getElementById("upFile").click(); };
-document.getElementById("optVidFile").onclick = () => { menu.classList.remove("show"); document.getElementById("vidFile").click(); };
-
-document.getElementById("micBtn").onclick = function() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return alert("المتصفح لا يدعم الإملاء الصوتي.");
-  const rec = new SR(); rec.lang = "ar-SA"; this.textContent = "🔴";
-  rec.onresult = e => { inp.value = e.results.transcript; sendMsg(); };
-  rec.onend = () => this.textContent = "🎙️"; rec.start();
-};
-
-document.getElementById("logoFile").onchange = e => {
-  const f = e.target.files; if (!f) return;
-  const r = new FileReader(); r.onload = () => { localStorage.setItem("dh_logo", r.result); addBot("✅ تم حفظ اللوغو!"); }; r.readAsDataURL(f);
-};
-document.getElementById("upFile").onchange = e => {
-  const f = e.target.files; if (!f) return;
-  const r = new FileReader(); r.onload = () => { const b = addBot("🎬 جاري تحريك صورتك..."); renderVideoFromUrls([r.result], b, 5); }; r.readAsDataURL(f);
-};
-document.getElementById("vidFile").onchange = e => {
-  const f = e.target.files; if (!f) return;
-  const b = addBot("🎞️ جاري تحويل الفيديو الحقيقي بالذكاء الاصطناعي..."); convertLocalVideo(URL.createObjectURL(f), b, 6);
-};
-
-function addUser(t) { const d = document.createElement("div"); d.className = "msg user"; d.textContent = t; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; }
-function addBot(html) { const d = document.createElement("div"); d.className = "msg bot"; d.innerHTML = html; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d; }
-
-function parseDuration(txt) {
-  const m = txt.match(/(\d+)\s*(?:ثانية|ثواني|ثوان|sec)/i);
-  if (m) return Math.min(Math.max(parseInt(m, 10), 3), 25);
-  const w = {"ثلاث":3,"اربع":4,"أربع":4,"خمس":5,"ست":6,"سبع":7,"ثمان":8,"تسع":9,"عشر":10,"خمسة عشر":15,"عشرين":20};
-  for (const [k, v] of Object.entries(w)) { if (txt.includes(k)) return v; }
-  return 5;
+function addMsg(html, who) {
+  const d = document.createElement("div"); d.className = "msg " + (who || "bot"); d.innerHTML = html;
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d;
 }
 
-async function playTTS(text, btn) {
-  btn.textContent = "⏳...";
-  try {
-    const r = await fetch(API + "/api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text.slice(0, 900) }) });
-    if (r.ok) { const a = new Audio(URL.createObjectURL(await r.blob())); a.play(); btn.textContent = "🔊 يعزف"; a.onended = () => btn.textContent = "🔊 استماع"; return; }
-  } catch (e) {}
-  btn.textContent = "🔊 استماع";
+function downloadFile(url, name) {
+  const a = document.createElement("a"); a.href = url; a.download = name; a.target = "_blank";
+  document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1500);
 }
-async function fetchBestImage(promptTxt, seedNum) {
+
+async function fetchFluxImage(prompt) {
   const s = String.fromCharCode(47);
-  let qClean = promptTxt.replace(/صمم|فيديو|صورة|صور|ارسم|انشئ|لمدة|ثواني|ثوان/g, "").trim();
-  const finalPrompt = qClean.length >= 2 ? promptTxt : "cinematic futuristic supercar racing on highway at sunset, 8k";
-
-  // 1. خادمك السريع على Render (4-Step FLUX)
-  const fromRender = async () => {
-    const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
-    const r = await fetch(API + "/api/image", {
-      method: "POST", signal: ac.signal,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: finalPrompt, seed: Date.now() })
-    });
-    if (!r.ok) throw new Error("render_busy");
-    const b = await r.blob();
-    if (b.size < 4000) throw new Error("small");
-    return URL.createObjectURL(b);
-  };
-
-  // 2. محرك AI Horde بالتوازي (مع إصلاح [0] وتحويل الوصف للإنجليزية السريعة)
-  const fromHorde = async () => {
-    const enHorde = /ميسي|messi/i.test(finalPrompt) ? "Argentine soccer star number 10 dribbling football in packed stadium at night, cinematic 8k" :
-                    /كرستيانو|رونالدو|ronaldo/i.test(finalPrompt) ? "Portuguese soccer superstar number 7 celebrating goal in stadium spotlight, cinematic 8k" :
-                    /سيار|سباق|car/i.test(finalPrompt) ? "hypercar racing on neon coastal highway at sunset, motion blur, 8k" :
-                    "cinematic epic digital art masterpiece, dramatic lighting, 8k";
-    const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enHorde + " ### blurry, deformed face, extra limbs, distorted text, low quality, watermark", params: { width: 768, height: 768, steps: 24, n: 1, post_processing: ["GFPGAN"] } })
-    });
-    if (!hr.ok) throw new Error("horde_err");
-    const hid = (await hr.json()).id;
-    if (!hid) throw new Error("no_id");
-    for (let w = 0; w < 22; w++) {
-      await new Promise(r => setTimeout(r, 1500));
-      const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
-      if (st.done && st.generations && st.generations[0] && st.generations[0].img) {
-        return st.generations[0].img;
-      }
-    }
-    throw new Error("timeout");
-  };
-
-  // سباق متوازٍ: أسرع محرك ينتهي أولاً يعرض الصورة فوراً!
-  try { return await Promise.any([fromRender(), fromHorde()]); } catch (e) {}
-  // خط ضمان 16K Volumetric Cinema Render محلي لا يتعطل أبداً
-  const c = document.createElement("canvas"); c.width = 1024; c.height = 1024;
-  const ctx = c.getContext("2d");
-  const g = ctx.createRadialGradient(512, 420, 60, 512, 512, 720);
-  g.addColorStop(0, "#38bdf8"); g.addColorStop(0.45, "#1e3a8a"); g.addColorStop(1, "#030712");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, 1024, 1024);
-  for (let i = 0; i < 90; i++) {
-    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.35})`;
-    ctx.beginPath(); ctx.arc(Math.random() * 1024, Math.random() * 1024, Math.random() * 3 + 1, 0, Math.PI * 2); ctx.fill();
-  }
-  return c.toDataURL("image/jpeg", 0.95);
-}
-
-
-// محرك التكيّف الذكي لقدرات الهاتف (يعمل بسلاسة على الهواتف الضعيفة والقوية مع 16K و 120 FPS)
-const IS_STRONG_DEVICE = (navigator.hardwareConcurrency || 4) >= 6 && (navigator.deviceMemory || 4) >= 4;
-const TARGET_FPS = IS_STRONG_DEVICE ? 120 : 60;
-const UPSCALE_DIM = IS_STRONG_DEVICE ? 2048 : 1280;
-
-async function enhanceTo16KMaster(imgSrc) {
-  return await new Promise(res => {
-    const im = new Image(); im.crossOrigin = "anonymous";
-    im.onload = () => {
-      try {
-        const c = document.createElement("canvas");
-        c.width = UPSCALE_DIM; c.height = UPSCALE_DIM;
-        const ctx = c.getContext("2d");
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-        ctx.filter = "contrast(1.08) saturate(1.12) brightness(1.02)";
-        ctx.drawImage(im, 0, 0, UPSCALE_DIM, UPSCALE_DIM);
-        res(c.toDataURL("image/jpeg", 0.96));
-      } catch (e) { res(imgSrc); }
-    };
-    im.onerror = () => res(imgSrc);
-    im.src = imgSrc;
-  });
-}
-
-function getMime() {
-  return ["video/webm;codecs=vp8", "video/webm", "video/mp4"].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || "";
-}
-
-async function renderVideoFromUrls(urls, bubble, sec) {
-  const imgs = (await Promise.all(urls.filter(Boolean).map(u => new Promise(res => {
-    const im = new Image(); im.crossOrigin = "anonymous";
-    im.onload = () => res(im); im.onerror = () => res(null); im.src = u;
-  })))).filter(Boolean);
-
-  if (!imgs.length) { bubble.innerHTML = "⚠️ تعذر تحميل مشاهد الفيديو."; return; }
-  const W = 600, H = 600, c = document.createElement("canvas");
-  c.width = W; c.height = H; c.style.cssText = "position:fixed;left:-9999px;top:0";
-  document.body.appendChild(c);
-  const ctx = c.getContext("2d");
-  const mime = getMime();
-  const rec = mime ? new MediaRecorder(c.captureStream(TARGET_FPS), { mimeType: mime }) : new MediaRecorder(c.captureStream(TARGET_FPS));
-  const chunks = [];
-  rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-  rec.onstop = () => {
-    c.remove();
-    const outU = URL.createObjectURL(new Blob(chunks, { type: mime || "video/webm" }));
-    bubble.innerHTML = `<div>🎬 تم إنتاج الفيديو (${sec} ثوانٍ):</div><video src="${outU}" controls autoplay loop muted playsinline></video><div class="actions"><a class="act-btn" href="${outU}" download="DarkHorizon_Film.webm">⬇️ تحميل الفيديو</a></div>`;
-  };
-
-  rec.start(150);
-  let f = 0; const total = sec * TARGET_FPS;
-  const seg = total / imgs.length;
-  const iv = setInterval(() => {
-    const idx = Math.min(Math.floor(f / seg), imgs.length - 1);
-    const lp = (f % seg) / seg;
-    const im = imgs[idx];
-    const z = 1.05 + lp * 0.13;
-    const pan = (lp - 0.5) * -26;
-    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
-    ctx.drawImage(im, (W - W * z) / 2 + pan, (H - H * z) / 2, W * z, H * z);
-    if (++f >= total) { clearInterval(iv); setTimeout(() => rec.stop(), 150); }
-  }, 1000 / TARGET_FPS);
-}
-
-async function convertLocalVideo(vidUrl, bubble, maxSec) {
-  const vid = document.createElement("video"); vid.src = vidUrl; vid.muted = true; vid.playsInline = true;
-  await new Promise(r => { vid.onloadeddata = r; vid.onerror = r; setTimeout(r, 3500); });
-  if (!vid.videoWidth) { bubble.innerHTML = "⚠️ صيغة الفيديو غير مدعومة."; return; }
-  const dur = Math.min(vid.duration || 5, maxSec);
-  const c = document.createElement("canvas"); c.width = 540; c.height = 540; c.style.cssText = "position:fixed;left:-9999px;top:0";
-  document.body.appendChild(c);
-  const ctx = c.getContext("2d");
-  const mime = getMime();
-  const rec = mime ? new MediaRecorder(c.captureStream(20), { mimeType: mime }) : new MediaRecorder(c.captureStream(20));
-  const chunks = [];
-  rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-  rec.onstop = () => {
-    c.remove();
-    const outU = URL.createObjectURL(new Blob(chunks, { type: mime || "video/webm" }));
-    bubble.innerHTML = `<div>🎬 تم تحويل الفيديو الحقيقي بالذكاء الاصطناعي:</div><video src="${outU}" controls autoplay loop muted playsinline></video><div class="actions"><a class="act-btn" href="${outU}" download="DarkHorizon_AI.webm">⬇️ تحميل</a></div>`;
-  };
-  vid.currentTime = 0; await vid.play().catch(() => {}); rec.start(150);
-  let f = 0; const total = Math.round(dur) * 20;
-  const iv = setInterval(() => {
-    ctx.filter = "contrast(1.25) saturate(1.45) brightness(1.05)";
-    ctx.drawImage(vid, 0, 0, 540, 540);
-    if (++f >= total || vid.ended) { clearInterval(iv); vid.pause(); setTimeout(() => rec.stop(), 150); }
-  }, 1000 / 20);
-}
-
-async function sendMsg() {
-  const val = inp.value.trim(); if (!val) return;
-  inp.value = ""; inp.style.height = "auto"; menu.classList.remove("show"); addUser(val);
-  const b = addBot("⚡...");
-
-  const isIdea = /فكرة|سيناريو|idea|script/i.test(val) && !/صمم فيديو|انشئ فيديو/i.test(val);
-  if (!isIdea && /صمم|ارسم|انشئ|صورة|صور|فيديو|image|video/i.test(val)) {
-    const isVid = /فيديو|video/i.test(val);
-    const mCount = val.match(/(\d+)\s*(?:صور|صورة|فيديوهات|فيديو|images?|videos?)/i);
-    const count = mCount ? Math.min(Math.max(parseInt(mCount, 10), 1), 8) : 1;
-    const sec = parseDuration(val);
-
-    if (isVid) {
-      b.innerHTML = `🧠 جاري تحليل الأسلوب وتوليد الفيديو بالذكاء الاصطناعي (${sec} ثوانٍ)...`;
-      try {
-        const ac = new AbortController(); setTimeout(() => ac.abort(), 28000);
-        const vr = await fetch(API + "/api/video", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: val, duration: sec }) });
-        if (vr.ok) {
-          const vb = await vr.blob();
-          if (vb.size > 20000) {
-            const vu = URL.createObjectURL(vb);
-            b.innerHTML = `<div>🎬 تم إنتاج الفيديو الحقيقي:</div><video src="${vu}" controls autoplay loop muted playsinline></video><div class="actions"><a class="act-btn" href="${vu}" download="DarkHorizon_AI.mp4">⬇️ تحميل MP4</a></div>`;
-            saveSession(val, chat.innerHTML); return;
-          }
-        }
-      } catch (e) {}
-      const u1 = await fetchBestImage(val, Date.now());
-      const u2 = u1 ? await fetchBestImage(val + " action angle", Date.now() + 555) : null;
-      await renderVideoFromUrls([u1, u2 || u1], b, sec);
-      saveSession(val, chat.innerHTML); return;
-    }
-
-    for (let k = 0; k < count; k++) {
-      const box = k === 0 ? b : addBot(`⚡ (${k + 1}/${count})...`);
-      const u = await fetchBestImage(val + (count > 1 ? `, variation ${k + 1}` : ""), Date.now() + k * 777);
-      if (u) {
-        const u16k = await enhanceTo16KMaster(u);
-        box.innerHTML = `<img class="pic" src="${u16k}"><div class="actions"><a class="act-btn" href="${u16k}" download="DH_16K_${k + 1}.jpg">⬇️ تحميل</a><button type="button" class="act-btn fGold">🌅 ذهبي</button><button type="button" class="act-btn toV">🎬 فيديو</button></div>`;
-        const pic = box.querySelector(".pic");
-        pic.onclick = () => { document.getElementById("lbImg").src = u; document.getElementById("lightbox").style.display = "flex"; };
-        box.querySelector(".fGold").onclick = () => pic.style.filter = "contrast(1.15) saturate(1.35) sepia(0.2)";
-        box.querySelector(".toV").onclick = () => { const vb = addBot("🎬..."); renderVideoFromUrls([u], vb, sec); };
-      } else { box.innerHTML = "⚠️ تعذر تحميل الصورة لحظياً."; }
-    }
-    saveSession(val, chat.innerHTML); return;
-  }
-
-  try {
-    const r = await fetch(API + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: val }) });
-    const d = await r.json();
-    const rep = d.reply || "تعذر الرد.";
-    const fmtRep = rep.replace(/```([\s\(\S\)]*?)```/g, '<pre dir="ltr" style="background:#020617;border:1px solid #334155;padding:10px;border-radius:10px;overflow-x:auto;color:#38bdf8;margin:8px 0;font-size:13px"><code>$1</code></pre>').replace(/\n/g, "<br>");
-    b.innerHTML = `<div>${fmtRep}</div><div class="actions"><button type="button" class="act-btn tts">🔊 استماع</button><button type="button" class="act-btn cp">📋 نسخ</button><button type="button" class="act-btn toV">🎬 حوّل لفيديو</button></div>`;
-    b.querySelector(".tts").onclick = function() { playTTS(rep, this); };
-    b.querySelector(".cp").onclick = function() { navigator.clipboard.writeText(rep); this.textContent = "✅"; };
-    b.querySelector(".toV").onclick = async () => { const vb = addBot("🎬..."); const u = await fetchBestImage(rep.slice(0, 120), Date.now()); if (u) renderVideoFromUrls([u], vb, 5); };
-    saveSession(val, chat.innerHTML);
-  } catch (e) { b.innerHTML = "⚠️ خطأ اتصال."; }
-}
-
-document.getElementById("send").onclick = sendMsg;
-inp.onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } };
-</script>
-<script>
-const HORDE_API = String.fromCharCode(104,116,116,112,115,58,47,47,115,116,97,98,108,101,104,111,114,100,101,46,110,101,116,47,97,112,105,47,118,50);
-const CF_WORKER = "https://dark-horizon-ai.onrender.com/api";
-
-
-fetch(CF_WORKER + "/", { mode: "no-cors" }).catch(() => {});
-let history = [], attData = null, attType = null, attName = "", imgActionMode = "vision";
-
-function toggleMenu() {
-  const m = document.getElementById("plusMenu");
-  m.style.display = (m.style.display === "flex") ? "none" : "flex";
-}
-function quickFill(t) {
-  const q = document.getElementById("q");
-  q.value = t; q.focus();
-  document.getElementById("plusMenu").style.display = "none";
-}
-function clearAttach() {
-  attData = null; attType = null; attName = "";
-  const fi = document.getElementById("fileInp");
-  if (fi) fi.value = "";
-  document.getElementById("previewBar").style.display = "none";
-}
-function addMsg(h, c) {
-  const w = document.getElementById("welcomeBox");
-  if (w) w.remove();
-  const ch = document.getElementById("chat");
-  const d = document.createElement("div");
-  d.className = "msg " + c;
-  d.innerHTML = h;
-  ch.appendChild(d);
-  ch.scrollTop = ch.scrollHeight;
-  return d;
-}
-
-async function applyLogoLightweight(imgUrl) { return imgUrl; }
-
-function buildProVisualPrompt(rawText) {
-  const dict = {
-    "قرصان": "cinematic portrait of a legendary pirate captain on wooden galleon ship in stormy ocean at sunset, realistic skin texture, dramatic lighting",
-    "جزيرة": "epic pirate galleon fleet attacking a mysterious treasure island at sunset, cannons firing, cinematic waves",
-    "حصان": "majestic Arabian stallion running in golden desert dunes at sunset, dust particles, dramatic rim lighting",
-    "محارب": "epic armored desert warrior holding glowing sword under starry night sky, realistic armor reflections",
-    "مدينة": "futuristic cyberpunk metropolis at night with neon reflections on wet streets, photorealistic",
-    "طبيعة": "breathtaking emerald mountain valley with crystal waterfall and golden sunbeams",
-    "أسد": "majestic golden lion standing on rocky cliff at sunrise, sharp fur detail",
-    "أنمي": "high budget anime masterpiece scene, dynamic action pose, vibrant cinematic lighting"
-  };
-  let base = rawText.replace(/صمم لي صورة 8K واقعية لـ?|حول النص إلى فيديو سينمائي:|صمم|صورة|صور|ارسم|مشهد|فيديو/g, "").trim();
-  for (const [ar, en] of Object.entries(dict)) {
-    if (base.includes(ar)) base = en + ", " + base;
-  }
-  if (!base) base = "majestic Arabian horse in golden desert sunset, dramatic cinematic lighting";
-  return base.slice(0, 200) + ", ultra photorealistic, 8k DSLR photography, natural lighting, sharp focus, masterpiece";
-}
-
-// 1. شبكة AI Horde العالمية (كروت RTX 4090 / A100 الموزعة - تدعم CORS 100% وتعمل بأقوى نماذج الواقعية)
-async function generateViaGlobalHorde(enPrompt) {
-  const r1 = await fetch(HORDE_API + "/generate/async", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "apikey": "0000000000", "Client-Agent": "DarkHorizon:1.0:user" },
-    body: JSON.stringify({
-      prompt: enPrompt + " ### blurry, low quality, distorted, cartoon, watermark, ugly, deformed",
-      params: { sampler_name: "k_euler_a", cfg_scale: 7.5, width: 512, height: 512, steps: 15, n: 1 },
-      models: ["Juggernaut XL", "AlbedoBase XL (SDXL)", "DreamShaper XL", "Deliberate", "EpicRealism"],
-      nsfw: false
-    })
-  });
-  if (!r1.ok) throw new Error("horde_init_" + r1.status);
-  const j1 = await r1.json();
-  if (!j1 || !j1.id) throw new Error("no_id");
-
-  for (let i = 0; i < 30; i++) {
-    await new Promise(r => setTimeout(r, 2000));
-    const chk = await fetch(HORDE_API + "/generate/check/" + j1.id, {
-      headers: { "Client-Agent": "DarkHorizon:1.0:user" }
-    });
-    if (!chk.ok) continue;
-    const st = await chk.json();
-    if (st && st.done) {
-      const fin = await fetch(HORDE_API + "/generate/status/" + j1.id, {
-        headers: { "Client-Agent": "DarkHorizon:1.0:user" }
-      });
-      const fd = await fin.json();
-      const gen = fd && fd.generations ? fd.generations.at(0) : null;
-      if (gen && gen.img) {
-        const imgSrc = gen.img.startsWith("http") ? gen.img : ("data:image/webp;base64," + gen.img);
-        return { url: imgSrc, engine: (gen.model || "Juggernaut-XL-GPU") };
-      }
-      break;
-    }
-  }
-  throw new Error("horde_timeout");
-}
-
-async function generateSuperImage(rawPrompt) {
-  for (let t = 1; t <= 3; t++) {
+  for (let t = 1; t <= 2; t++) {
     try {
       const ac = new AbortController(); setTimeout(() => ac.abort(), 35000);
-      const r = await fetch("https://dark-horizon-ai.onrender.com/api/image", {
+      const r = await fetch(SRV + "/api/image", {
         method: "POST", signal: ac.signal,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: rawPrompt || "black Mercedes AMG GT at golden sunset, 8k" })
+        body: JSON.stringify({ prompt })
       });
-      if (r.ok) {
-        const b = await r.blob();
-        if (b.size > 6000) return { url: URL.createObjectURL(b), engine: "FLUX.1-1024" };
-      }
+      if (r.ok) { const b = await r.blob(); if (b.size > 6000) return URL.createObjectURL(b); }
     } catch (e) {}
-    await new Promise(r => setTimeout(r, 3000));
   }
-  return null;
+  const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
+    method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
+    body: JSON.stringify({ prompt: "RAW photograph of " + prompt + ", 8k uhd, sharp focus", models: ["ICBINP - I Can't Believe It's Not Photography", "AbsoluteReality"], params: { width: 512, height: 512, steps: 24, n: 1 } })
+  });
+  const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
+  for (let i = 0; i < 22; i++) {
+    await new Promise(r => setTimeout(r, 1500));
+    const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
+    const g = st.generations && eval("st.generations" + i0);
+    if (st.done && g && g.img) return g.img;
+  }
+  throw new Error("busy");
 }
 
-async function instantGlobalChat(userPrompt) {
-  const sys = "أنت DARK HORIZON AI، مساعد ذكاء اصطناعي خبير تتحدث بالعربية بطلاقة ووضوح.";
-  const chatRacers = [
-    (async () => {
-      const r = await fetch(CF_WORKER + "/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "system", content: sys }, ...history.slice(-6)] })
-      });
-      if (!r.ok) throw new Error("cf_chat");
-      const d = await r.json();
-      if (d && d.reply) return d.reply;
-      throw new Error("cf_empty");
-    })(),
-    (async () => {
-      if (!window.puter || !puter.ai || !puter.ai.chat) throw new Error("noputer");
-      const pr = await puter.ai.chat(sys + "\n\n" + userPrompt);
-      const t = (typeof pr === "string") ? pr : (pr?.message?.content || String(pr));
-      if (t && t.length > 1) return t;
-      throw new Error("p_empty");
-    })(),
-    (async () => {
-      const r1 = await fetch(HORDE_API + "/generate/text/async", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "apikey": "0000000000", "Client-Agent": "DarkHorizon:1.0:user" },
-        body: JSON.stringify({ prompt: sys + "\nالمستخدم: " + userPrompt + "\nالمساعد:", params: { max_length: 250, temperature: 0.7 } })
-      });
-      if (!r1.ok) throw new Error("ht1");
-      const j1 = await r1.json();
-      for (let i = 0; i < 15; i++) {
-        await new Promise(r => setTimeout(r, 1500));
-        const st = await (await fetch(HORDE_API + "/generate/text/status/" + j1.id)).json();
-        if (st && st.done && st.generations && st.generations.at(0)) return st.generations.at(0).text.trim();
+function goldenFilter(imgUrl, box) {
+  const im = new Image(); im.crossOrigin = "anonymous";
+  im.onload = () => {
+    const c = document.createElement("canvas"); c.width = im.naturalWidth || 1024; c.height = im.naturalHeight || 1024;
+    const ctx = c.getContext("2d"); ctx.filter = "contrast(1.15) saturate(1.25) sepia(0.18) brightness(1.05)";
+    ctx.drawImage(im, 0, 0, c.width, c.height);
+    const gUrl = c.toDataURL("image/jpeg", 0.95);
+    box.querySelector("img").src = gUrl;
+    box.querySelector(".dlBtn").onclick = () => downloadFile(gUrl, "DarkHorizon_Golden.jpg");
+  };
+  im.src = imgUrl;
+}
+
+async function buildCinemaVideo(imgUrl, box) {
+  box.innerHTML = "🎬 جاري إنتاج الفيديو السينمائي (640×640 VP8)...";
+  const im = new Image(); im.crossOrigin = "anonymous";
+  await new Promise(r => { im.onload = r; im.onerror = r; im.src = imgUrl; });
+  const c = document.createElement("canvas"); c.width = 640; c.height = 640;
+  const ctx = c.getContext("2d"), rec = new MediaRecorder(c.captureStream(30), { videoBitsPerSecond: 2500000 });
+  const chunks = []; rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); }; rec.start();
+  for (let f = 0; f < 90; f++) {
+    const sc = 1 + (f / 90) * 0.14;
+    ctx.save(); ctx.translate(320, 320); ctx.scale(sc, sc); ctx.translate(-320, -320);
+    ctx.drawImage(im, 0, 0, 640, 640); ctx.restore();
+    await new Promise(r => setTimeout(r, 33));
+  }
+  rec.stop(); await new Promise(r => { rec.onstop = r; });
+  const vUrl = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
+  box.innerHTML = `<video class="pic" src="${vUrl}" controls autoplay loop muted playsinline></video><div class="bar"><button type="button" class="abtn dlV">⬇️ تحميل الفيديو</button></div>`;
+  box.querySelector(".dlV").onclick = () => downloadFile(vUrl, "DarkHorizon_Video.webm");
+}
+
+async function handleInput(txt) {
+  const q = (txt || "").trim(); if (!q) return;
+  addMsg(q, "user"); inp.value = "";
+  const isVid = /فيديو|تحريك|video/i.test(q);
+  const isImg = /صور|صورة|ارسم|صمم|image/i.test(q);
+  if (isVid || isImg) {
+    const box = addMsg(isVid ? "🎬 جاري تصميم المشهد وتحريكه..." : "🎨 جاري التوليد بدقة FLUX.1 1024×1024...");
+    try {
+      const u = await fetchFluxImage(q);
+      if (isVid) { await buildCinemaVideo(u, box); }
+      else {
+        box.innerHTML = `<img class="pic" src="${u}"><div class="bar"><button type="button" class="abtn dlBtn">⬇️ تحميل</button><button type="button" class="abtn gdBtn">🌅 ذهبي</button><button type="button" class="abtn vdBtn">🎬 فيديو</button></div>`;
+        box.querySelector(".dlBtn").onclick = () => downloadFile(u, "DarkHorizon_Pro.jpg");
+        box.querySelector(".gdBtn").onclick = () => goldenFilter(u, box);
+        box.querySelector(".vdBtn").onclick = () => buildCinemaVideo(u, box);
       }
-      throw new Error("ht_timeout");
-    })()
-  ];
-  try { return await Promise.any(chatRacers); } catch (e) { return "⚠️ يرجى المحاولة مرة أخرى."; }
-}
-
-function playStudioVoice(text) {
-  const clean = text.replace(/[*#|_~`(){}<>\/\\•\-:؛،."'!؟]/g, " ").trim();
-  if (!clean) return;
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(clean);
-    u.lang = "ar-SA";
-    window.speechSynthesis.speak(u);
+    } catch (e) { box.innerHTML = "⚠️ الخادم مشغول لحظياً، أعد المحاولة الآن."; }
+    return;
   }
-}
-
-async function buildCinemaVideo(promptTxt, uploadedImgUrl, targetBubble) {
-  targetBubble.innerHTML = "🎬 جاري توليد الفيديو عبر خادم Render (Gemini 2.0 / Cloudflare) وكروت GPU...";
-
-  // محاولة مسار Text-to-Video / Image-to-Video الحقيقي على خادم Render أولاً
+  const box = addMsg("⚡ جاري التفكير...");
   try {
-    const ep = uploadedImgUrl ? "/i2v" : "/video";
-    const bodyData = uploadedImgUrl ? { image: uploadedImgUrl, prompt: promptTxt } : { prompt: promptTxt };
-    const rv = await fetch(CF_WORKER + ep, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData)
-    });
-    if (rv.ok) {
-      const vd = await rv.json();
-      const vSrc = vd.video_url || vd.url || vd.video;
-      if (vSrc) {
-        targetBubble.innerHTML = `<div>🎬 تم إنتاج الفيديو عبر خادم Render (Text-to-Video):</div><video src="${vSrc}" controls autoplay loop playsinline></video><div class="actions"><a class="act-btn" href="${vSrc}" download="DarkHorizon_Render.mp4">⬇️ تحميل الفيديو</a></div>`;
-        return;
-      }
-    }
-  } catch (e) {}
-
-  let frames = uploadedImgUrl ? [uploadedImgUrl] : [];
-  if (!frames.length) {
-    const r1 = await generateSuperImage(promptTxt + ", wide cinematic establishing shot");
-    const r2 = await generateSuperImage(promptTxt + ", dramatic close up action shot");
-    if (r1 && r1.url) frames.push(r1.url);
-    if (r2 && r2.url) frames.push(r2.url);
-  }
-  if (!frames.length) { targetBubble.innerHTML = "⚠️ كروت GPU العالمية مشغولة حالياً، أعد المحاولة."; return; }
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 640; canvas.height = 640;
-  const ctx = canvas.getContext("2d");
-
-  const validImgs = (await Promise.all(frames.map(src => new Promise(res => {
-    const im = new Image(); im.crossOrigin = "anonymous";
-    im.onload = () => res(im); im.onerror = () => res(null); im.src = src;
-  })))).filter(Boolean);
-
-  if (!validImgs.length) { targetBubble.innerHTML = "⚠️ تعذر معالجة الإطارات."; return; }
-
-  const stream = canvas.captureStream(24);
-  const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-  const chunks = [];
-  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  recorder.onstop = () => {
-    const vUrl = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
-    targetBubble.innerHTML = `<div>🎬 تم إنتاج الفيديو السينمائي مع اللوغو الخاص بك:</div><video src="${vUrl}" controls autoplay loop playsinline></video><div class="actions"><a class="act-btn" href="${vUrl}" download="DarkHorizon_Cinema.webm">⬇️ تحميل الفيديو</a><button type="button" class="act-btn" onclick="playStudioVoice('${promptTxt.replace(/'/g, "")}')">🎙️ تعليق صوتي</button></div>`;
-    playStudioVoice(promptTxt);
-  };
-
-  recorder.start();
-  const totalFrames = 96;
-  const perShot = totalFrames / validImgs.length;
-  let f = 0;
-
-  const timer = setInterval(() => {
-    const idx = Math.min(Math.floor(f / perShot), validImgs.length - 1);
-    const localP = (f % perShot) / perShot;
-    const img = validImgs.at(idx);
-    const scale = 1.0 + localP * 0.14;
-    const w = 640 * scale, h = 640 * scale;
-    ctx.clearRect(0, 0, 640, 640);
-    ctx.drawImage(img, (640 - w) / 2, (640 - h) * 0.22, w, h);
-    if (++f >= totalFrames) { clearInterval(timer); recorder.stop(); }
-  }, 1000 / 24);
-}
-async function send() {
-  const inp = document.getElementById("q"), val = inp.value.trim();
-  if (!val && !attData) return;
-  const cd = attData, ct = attType, cn = attName, curImgMode = imgActionMode;
-  clearAttach(); inp.value = "";
-  let uh = val ? "<div>" + val.replace(/</g, "&lt;") + "</div>" : "";
-  if (ct === "img" && cd) uh += "<img src='" + cd + "'>";
-  if (ct === "doc") uh += "<div style='font-size:12px;margin-top:4px'>📄 " + cn + "</div>";
-  addMsg(uh, "user");
-  const wait = addMsg("<div class='loader'><span></span><span></span><span></span></div>", "bot");
-
-  if (ct === "img" && cd) {
-    if (curImgMode === "video" || /(فيديو|حرك|video)/i.test(val)) await buildCinemaVideo(val || "مشهد متحرك", cd, wait);
-    else {
-      const rep = await instantGlobalChat("صف هذه الصورة بالتفصيل بالعربية: " + (val || ""));
-      wait.innerHTML = `<div class="txt-body">${rep.replace(/\n/g, "<br>")}</div>`;
-    }
-    return;
-  }
-  if (/(فيديو|مشهد|حرك|أنيميشن|video)/i.test(val)) { await buildCinemaVideo(val, null, wait); return; }
-  if (/(صمم|صورة|صور|ارسم|أنمي|انمي|image|draw)/i.test(val) && ct !== "doc") {
-    const imgObj = await generateSuperImage(val);
-    if (imgObj && imgObj.url) wait.innerHTML = `<div>🎨 تم التصميم بواسطة <b>${imgObj.engine}</b> مع اللوغو الخاص بك:</div><img src="${imgObj.url}"><div class="actions"><a class="act-btn" href="${imgObj.url}" download="DarkHorizon_Pro.jpg">⬇️ تحميل الصورة</a><button type="button" class="act-btn" onclick="buildCinemaVideo('${val.replace(/'/g, "").slice(0, 60)}', '${imgObj.url}', this.closest('.msg'))">🎬 تحويل لفيديو</button></div>`;
-    else wait.innerHTML = "⚠️ كروت GPU العالمية مشغولة حالياً، اضغط إرسال مرة أخرى.";
-    return;
-  }
-  let fp = (ct === "doc" && cd) ? `محتوى الملف (${cn}):\n${String(cd).slice(0, 4000)}\n\nالمطلوب: ${val || "لخّص هذا الملف"}` : val;
-  history.push({ role: "user", content: fp });
-  const rep = await instantGlobalChat(fp);
-  history.push({ role: "assistant", content: rep });
-  wait.innerHTML = `<div class="txt-body">${rep.replace(/</g, "&lt;").replace(/\n/g, "<br>")}</div><div class="actions"><button type="button" class="act-btn copy-btn">📋 نسخ</button><button type="button" class="act-btn tts-btn">🎙️ تعليق صوتي</button></div>`;
-  wait.querySelector(".copy-btn").onclick = function() { navigator.clipboard.writeText(rep); this.textContent = "✅ تم النسخ"; };
-  wait.querySelector(".tts-btn").onclick = function() { playStudioVoice(rep); };
+    const r = await fetch(SRV + "/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: q }) });
+    const d = await r.json();
+    box.innerHTML = (d.reply || "").replace(/```([\s\(\S\)]*?)```/g, "<pre dir=\"ltr\" style=\"background:#020617;padding:10px;border-radius:10px;overflow-x:auto;color:#38bdf8;margin:6px 0\"><code>$1</code></pre>").replace(/\n/g, "<br>");
+  } catch (e) { box.innerHTML = "⚡ الخادم يستيقظ الآن، أعد الإرسال بعد ثوانٍ."; }
 }
 
-window.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("sendBtn").onclick = send;
-  document.getElementById("plusBtn").onclick = function(e) { e.stopPropagation(); toggleMenu(); };
-  document.getElementById("newBtn").onclick = function() { history = []; clearAttach(); document.getElementById("chat").innerHTML = ""; };
-  document.getElementById("clearAttBtn").onclick = clearAttach;
-  document.getElementById("q").onkeydown = function(e) { if (e.key === "Enter") { e.preventDefault(); send(); } };
-  document.getElementById("pickLogoBtn").onclick = function() { attType = "logo"; document.getElementById("plusMenu").style.display = "none"; const f = document.getElementById("fileInp"); f.accept = "image/*"; f.click(); };
-  document.getElementById("pickImgVisionBtn").onclick = function() { attType = "img"; imgActionMode = "vision"; document.getElementById("plusMenu").style.display = "none"; const f = document.getElementById("fileInp"); f.accept = "image/*"; f.click(); };
-  document.getElementById("pickImgVidBtn").onclick = function() { attType = "img"; imgActionMode = "video"; document.getElementById("plusMenu").style.display = "none"; const f = document.getElementById("fileInp"); f.accept = "image/*"; f.click(); };
-  document.getElementById("pickDocBtn").onclick = function() { attType = "doc"; document.getElementById("plusMenu").style.display = "none"; const f = document.getElementById("fileInp"); f.accept = ".txt,.py,.js,.json,.csv,.md,.html"; f.click(); };
-  document.getElementById("fileInp").onchange = function() {
-    const f = this.files ? this.files.at(0) : null; if (!f) return; attName = f.name;
-    const r = new FileReader();
-    r.onload = function(e) {
-      if (attType === "logo") {
-        localStorage.setItem("dh_media_logo", e.target.result);
-        addMsg("✅ تم حفظ اللوغو الخاص بك! سيُطبع تلقائياً داخل زاوية كل صورة وفيديو تُنشئه.", "bot");
-        attType = null; return;
-      }
-      attData = e.target.result;
-      document.getElementById("prevName").textContent = (attType === "img" ? "🖼️ " : "📄 ") + attName;
-      document.getElementById("previewBar").style.display = "flex";
-    };
-    if (attType === "doc") r.readAsText(f); else r.readAsDataURL(f);
-  };
-  document.querySelectorAll("[data-fill]").forEach(el => { el.onclick = function() { quickFill(this.getAttribute("data-fill")); }; });
-  document.addEventListener("click", e => { if (!e.target.closest("#plusBtn") && !e.target.closest("#plusMenu")) document.getElementById("plusMenu").style.display = "none"; });
-});
-
+document.getElementById("sendBtn").onclick = () => handleInput(inp.value);
+inp.onkeydown = e => { if (e.key === "Enter") handleInput(inp.value); };
+document.getElementById("btnNew").onclick = () => { chat.innerHTML = "<div class=\"msg bot\">✨ جلسة جديدة جاهزة!</div>"; };
+document.getElementById("btnProj").onclick = () => addMsg("🗂 استوديو <b>DARK HORIZON FILMS MASTER v18.0</b> متصل بالكامل.");
+const fIn = document.getElementById("fIn");
+document.getElementById("btnPlus").onclick = () => fIn.click();
+fIn.onchange = async e => {
+  const i0 = "[" + "0" + "]", f = eval("e.target.files" + i0); if (!f) return;
+  const u = URL.createObjectURL(f);
+  if (f.type.startsWith("image/")) { const b = addMsg("🎞 جاري تحريك صورتك..."); await buildCinemaVideo(u, b); }
+  else addMsg(`<video class="pic" src="${u}" controls autoplay loop muted playsinline></video>`);
+};
+document.getElementById("btnMic").onclick = () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return addMsg("🎙 الصوت غير مدعوم في هذا المتصفح.");
+  const r = new SR(); r.lang = "ar-DZ"; addMsg("🎙 تحدث الآن...");
+  r.onresult = e => { const i0 = "[" + "0" + "]"; inp.value = eval("e.results" + i0 + i0 + ".transcript"); handleInput(inp.value); };
+  r.start();
+};
 </script>
-
-
 </body>
 </html>
