@@ -37,7 +37,7 @@ footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);borde
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">🚀 مرحباً بك في <b>DARK HORIZON ULTRA v12.0</b> — جميع محركات الذكاء الاصطناعي المجانية مفعّلة بالكامل!</div>
+  <div class="msg bot">🚀 مرحباً بك في <b>FLUX.1-SCHNELL 1024px EXACT v14.0</b> — جميع محركات الذكاء الاصطناعي المجانية مفعّلة بالكامل!</div>
 </div>
 <div class="chips">
   <button type="button" class="chip" data-p="صمم صورة سيارة مستقبلية خارقة في الغروب 8K">🎨 صورة FLUX 1024px</button>
@@ -66,33 +66,31 @@ function addMsg(html, who) {
 
 async function saveToPhone(url, name) {
   try {
-    const b = await (await fetch(url)).blob();
-    const u = URL.createObjectURL(b), a = document.createElement("a");
-    a.href = u; a.download = name; document.body.appendChild(a); a.click();
-    setTimeout(() => { a.remove(); URL.revokeObjectURL(u); }, 2000);
-    addMsg("✅ تم حفظ الملف في هاتفك: <b>" + name + "</b>");
+    const a = document.createElement("a");
+    a.href = url; a.download = name; a.target = "_blank";
+    document.body.appendChild(a); a.click();
+    setTimeout(() => a.remove(), 1500);
+    addMsg("✅ جاري تنزيل الملف: <b>" + name + "</b> (إذا لم يبدأ تلقائياً اضغط مطولاً على الصورة واختر تنزيل).");
   } catch (e) { window.open(url, "_blank"); }
 }
 
 async function genImage1024(prompt) {
-  const s = String.fromCharCode(47);
-  try {
-    const ac = new AbortController(); setTimeout(() => ac.abort(), 36000);
-    const r = await fetch(API + "/api/image", { method: "POST", signal: ac.signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
-    if (r.ok) { const b = await r.blob(); if (b.size > 6000) return URL.createObjectURL(b); }
-  } catch (e) {}
-  const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
-    method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-    body: JSON.stringify({ prompt: prompt + ", 8k photorealistic masterpiece ### blurry, low quality", params: { width: 512, height: 512, steps: 18, n: 1 } })
-  });
-  const hid = (await hr.json()).id, i0 = "[" + "0" + "]";
-  for (let i = 0; i < 20; i++) {
-    await new Promise(r => setTimeout(r, 1500));
-    const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
-    const g = st.generations && eval("st.generations" + i0);
-    if (st.done && g && g.img) return g.img;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const ac = new AbortController(); setTimeout(() => ac.abort(), 38000);
+      const r = await fetch(API + "/api/image", {
+        method: "POST", signal: ac.signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+      if (r.ok) {
+        const b = await r.blob();
+        if (b.size > 6000) return URL.createObjectURL(b);
+      }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 4000));
   }
-  throw new Error("busy");
+  throw new Error("flux_busy");
 }
 
 async function genVideoAI(prompt, box) {
@@ -157,7 +155,7 @@ async function runPrompt(txt) {
 document.getElementById("sendBtn").onclick = () => runPrompt(inp.value);
 inp.onkeydown = e => { if (e.key === "Enter") runPrompt(inp.value); };
 document.querySelectorAll(".chip[data-p]").forEach(b => { b.onclick = () => runPrompt(b.getAttribute("data-p")); });
-document.getElementById("btnNew").onclick = () => { chat.innerHTML = '<div class="msg bot">✨ جلسة جديدة جاهزة في <b>DARK HORIZON ULTRA v12.0</b></div>'; };
+document.getElementById("btnNew").onclick = () => { chat.innerHTML = '<div class="msg bot">✨ جلسة جديدة جاهزة في <b>FLUX.1-SCHNELL 1024px EXACT v14.0</b></div>'; };
 document.getElementById("btnMem").onclick = () => {
   const m = JSON.parse(localStorage.getItem("dh_mem") || "[]");
   addMsg(m.length ? "🧠 <b>آخر طلباتك المحفوظة:</b><br>• " + m.slice(0, 6).join("<br>• ") : "🧠 الذاكرة فارغة حالياً.");
