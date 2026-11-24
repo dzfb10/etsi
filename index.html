@@ -40,7 +40,7 @@ footer{padding:8px 10px;background:var(--glass);backdrop-filter:blur(16px);borde
   </div>
 </header>
 <div id="chat">
-  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(ULTRA HD PRO v7.0)</b></div>
+  <div class="msg bot">✨ أهلاً بك في <b>DARK HORIZON FILMS</b> — الواجهة العصرية الذكية <b>(REAL AI RENDER v7.1)</b></div>
 </div>
 <div class="chips">
   <button type="button" class="chip" data-p="صمم صورة سيارة رياضية مستقبلية في الغروب 8K">🎨 تصميم صورة AI</button>
@@ -88,11 +88,11 @@ async function makePureAIImage(prompt) {
     const enQ = /سيار|سباق/i.test(prompt) ? "futuristic hypercar neon night, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus" : "epic futuristic cyber city sunset, 16k ultra photorealistic cinema master, ray tracing, hyper-detailed, sharp focus";
     const hr = await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "async", {
       method: "POST", headers: { "Content-Type": "application/json", "apikey": "0000000000" },
-      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 1024, height: 1024, steps: 25, n: 1 } })
+      body: JSON.stringify({ prompt: enQ + " ### blurry, photo, text", params: { width: 512, height: 512, steps: 18, n: 1 } })
     });
     const hid = (await hr.json()).id;
     const i0 = "[" + "0" + "]";
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 18; i++) {
       await new Promise(r => setTimeout(r, 1500));
       const st = await (await fetch("https:" + s + s + "stablehorde.net" + s + "api" + s + "v2" + s + "generate" + s + "status" + s + hid)).json();
       const g = st.generations && eval("st.generations" + i0);
